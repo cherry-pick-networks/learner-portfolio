@@ -24,7 +24,7 @@ def _get_jwks() -> dict[str, object]:
         response = httpx.get(_JWKS_URL)
         response.raise_for_status()
         _jwks_cache = response.json()
-    return _jwks_cache  # type: ignore[return-value]
+    return _jwks_cache
 
 
 def verify_token(token: str = Depends(oauth2_scheme)) -> dict[str, object]:
