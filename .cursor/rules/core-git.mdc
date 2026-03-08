@@ -18,4 +18,5 @@ unless pushing to a shared remote requires it.
 
 **File renames (§R)**: When only the path or filename changes (content
 unchanged), use `mv` or `git mv`; do not delete the old file and write a new
-one.
+one. If the source directory is left empty after the move, remove it (e.g.
+`rmdir` or delete the folder).

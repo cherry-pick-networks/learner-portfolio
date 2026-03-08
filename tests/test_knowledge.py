@@ -50,9 +50,9 @@ def test_list_grammar_by_cefr() -> None:
 
 
 def test_list_lexis_by_cefr() -> None:
-    conn = _make_conn([["apple", 1]])
+    conn = _make_conn([["apple", None, None, 1]])
     app.dependency_overrides[get_graph_conn] = lambda: conn
     response = client.get("/english/inventory/lexis/b1")
     assert response.status_code == 200
     data = response.json()
-    assert data[0]["word"] == "apple"
+    assert data[0]["lemma"] == "apple"

@@ -29,6 +29,12 @@ exist yet. Each file gets one line only:
 from __future__ import annotations
 ```
 
+Before writing any skeleton, satisfy both design constraints:
+- **Data coupling**: Each unit receives only the data it needs
+  as explicit parameters — no shared mutable state or control flags.
+- **Functional cohesion**: Each unit performs exactly one task —
+  split before writing, not after.
+
 Create `__init__.py` files for any new packages as well.
 Do not write any logic — leave all content for subagents.
 
