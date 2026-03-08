@@ -1,6 +1,9 @@
-"""Testlet exam text graph: Source, Testlet, ExamQuestion nodes and edges."""
+"""Testlet graph: Source, Testlet (passage + questions in one node)."""
 
 from __future__ import annotations
+
+import json
+from typing import Any
 
 import falkordb
 
@@ -16,7 +19,7 @@ def upsert_source(
     issuer: str = "KICE",
 ) -> None:
     """Create or update a Source node.
-    Call before upsert_testlet/upsert_question.
+    Call before upsert_testlet.
     """
     q = (
         "MERGE (s:Source {source_id: $source_id}) "
@@ -45,15 +48,21 @@ def upsert_testlet(
     question_group: str,
     text: str,
     footnotes: str = "",
+    questions: list[dict[str, Any]] | None = None,
 ) -> None:
-    """Create/update Testlet and link to Source.
+    """Create/update Testlet (passage + questions) and link to Source.
     Call upsert_source first.
+    questions: list of dicts with number, section, question_type, stem,
+    options, answer, score.
     """
+    questions_json = json.dumps(questions if questions is not None else [])
     q = (
         "MERGE (t:Testlet {testlet_id: $testlet_id}) "
         "ON CREATE SET t.source_id = $source_id, "
         "t.question_group = $question_group, t.text = $text, "
-        "t.footnotes = $footnotes "
+        "t.footnotes = $footnotes, t.questions = $questions "
+        "ON MATCH SET t.text = $text, t.footnotes = $footnotes, "
+        "t.questions = $questions "
         "WITH t MERGE (s:Source {source_id: $source_id}) "
         "MERGE (t)-[:IN_SOURCE]->(s)"
     )
@@ -65,52 +74,6 @@ def upsert_testlet(
             "question_group": question_group,
             "text": text,
             "footnotes": footnotes,
+            "questions": questions_json,
         },
     )
-
-
-def upsert_question(
-    graph: falkordb.Graph,
-    *,
-    question_id: str,
-    source_id: str,
-    number: int,
-    section: str,
-    question_type: str,
-    stem: str,
-    options: str,
-    answer: int,
-    score: int,
-    testlet_id: str | None = None,
-) -> None:
-    """Create/update ExamQuestion, link to Source; optionally to Testlet."""
-    q = (
-        "MERGE (q:ExamQuestion {question_id: $question_id}) "
-        "ON CREATE SET q.source_id = $source_id, q.number = $number, "
-        "q.section = $section, q.question_type = $question_type, "
-        "q.stem = $stem, q.options = $options, "
-        "q.answer = $answer, q.score = $score "
-        "WITH q MERGE (s:Source {source_id: $source_id}) "
-        "MERGE (q)-[:IN_SOURCE]->(s)"
-    )
-    params: dict = {
-        "question_id": question_id,
-        "source_id": source_id,
-        "number": number,
-        "section": section,
-        "question_type": question_type,
-        "stem": stem,
-        "options": options,
-        "answer": answer,
-        "score": score,
-    }
-    graph.query(q, params=params)
-    if testlet_id:
-        q2 = (
-            "MATCH (q:ExamQuestion {question_id: $question_id}) "
-            "MATCH (t:Testlet {testlet_id: $testlet_id}) "
-            "MERGE (q)-[:QUESTION_OF]->(t)"
-        )
-        graph.query(
-            q2, params={"question_id": question_id, "testlet_id": testlet_id}
-        )
