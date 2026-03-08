@@ -5,7 +5,9 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     sqlite_path: str = "./data/learner_portfolio.db"
-    kuzu_path: str = "./data/knowledge_graph"
+    falkordb_host: str = "localhost"
+    falkordb_port: int = 56379
+    falkordb_graph: str = "knowledge_graph"
     openai_api_key: str = ""
     entra_tenant_id: str = ""
     entra_client_id: str = ""

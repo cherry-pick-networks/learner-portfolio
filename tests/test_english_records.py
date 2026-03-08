@@ -9,7 +9,9 @@ from unittest.mock import MagicMock, patch
 _fake_config = ModuleType("app.core.config")
 _fake_settings = MagicMock()
 _fake_settings.sqlite_path = ":memory:"
-_fake_settings.kuzu_path = "/tmp/test_kuzu"
+_fake_settings.falkordb_host = "localhost"
+_fake_settings.falkordb_port = 56379
+_fake_settings.falkordb_graph = "knowledge_graph"
 _fake_settings.openai_api_key = ""
 _fake_settings.entra_tenant_id = "test-tenant"
 _fake_settings.entra_client_id = "test-client"
@@ -19,11 +21,11 @@ _fake_config.Settings = MagicMock(  # type: ignore[attr-defined]
 )
 sys.modules["app.core.config"] = _fake_config
 
-_fake_kuzu = ModuleType("app.core.kuzu")
-_fake_kuzu.db = MagicMock()  # type: ignore[attr-defined]
-_fake_kuzu.get_graph_conn = MagicMock()  # type: ignore[attr-defined]
-_fake_kuzu.init_graph_schema = MagicMock()  # type: ignore[attr-defined]
-sys.modules["app.core.kuzu"] = _fake_kuzu
+_fake_falkordb = ModuleType("app.core.falkordb")
+_fake_falkordb._client = MagicMock()  # type: ignore[attr-defined]
+_fake_falkordb.get_graph_conn = MagicMock()  # type: ignore[attr-defined]
+_fake_falkordb.init_graph_schema = MagicMock()  # type: ignore[attr-defined]
+sys.modules["app.core.falkordb"] = _fake_falkordb
 
 from fastapi.testclient import TestClient  # noqa: E402
 

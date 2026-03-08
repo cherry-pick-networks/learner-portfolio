@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from typing import cast
-
-import kuzu
-from kuzu.query_result import QueryResult
+import falkordb
 from pydantic import BaseModel
 
 
@@ -18,19 +15,9 @@ _QUERY = (
 )
 
 
-def list_by_cefr(conn: kuzu.Connection, cefr: str) -> list[GrammarItem]:
-    raw = conn.execute(_QUERY, parameters={"cefr": cefr.upper()})
-    result = raw if not isinstance(raw, list) else raw[0] if raw else None
-    if result is None:
-        return []
-    cursor = cast(QueryResult, result)
-    items: list[GrammarItem] = []
-    while cursor.has_next():
-        row = cast(tuple[object, ...], cursor.get_next())
-        items.append(
-            GrammarItem(
-                guideword=cast(str, row[0]),
-                source=cast(str, row[1]),
-            )
-        )
-    return items
+def list_by_cefr(graph: falkordb.Graph, cefr: str) -> list[GrammarItem]:
+    result = graph.query(_QUERY, params={"cefr": cefr.upper()})
+    return [
+        GrammarItem(guideword=row[0], source=row[1])
+        for row in result.result_set
+    ]

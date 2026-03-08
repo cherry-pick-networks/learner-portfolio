@@ -5,10 +5,11 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel
 
 from app.core.config import settings
-from app.core.kuzu import init_graph_schema
+from app.core.falkordb import GraphDbUnavailableError
 from app.core.sqlite import engine
 from app.routers import english
 
@@ -16,12 +17,21 @@ from app.routers import english
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
     Path(settings.sqlite_path).parent.mkdir(parents=True, exist_ok=True)
-    Path(settings.kuzu_path).parent.mkdir(parents=True, exist_ok=True)
     SQLModel.metadata.create_all(engine)
-    init_graph_schema()
     yield
 
 
 app = FastAPI(title="learner-portfolio", lifespan=lifespan)
+
+
+@app.exception_handler(GraphDbUnavailableError)
+def handle_graph_db_unavailable(
+    _request: object, exc: GraphDbUnavailableError
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=503,
+        content={"detail": str(exc)},
+    )
+
 
 app.include_router(english.router)

@@ -16,7 +16,7 @@ When writing or editing AI-facing docs in this folder, follow RULES.md §D.
 - **Name**: learner-portfolio
 - **Runtime**: Python 3.14
 - **Stack**: FastAPI (HTTP), Pydantic v2 / SQLModel (validation),
-  SQLite (relational storage), Kùzu (graph storage)
+  SQLite (relational storage), FalkorDB (graph storage)
 - **Entry**: `main.py` (FastAPI app, router registration, startup event)
 - **Type checker**: `ty`
 - **Linter / formatter**: `ruff`
@@ -33,18 +33,18 @@ app/
     english/
       records/           # transaction data (practice, assessment,
                          #   acquisition, proficiency, writing)
-      inventory/         # graph queries (grammar, lexis — Kùzu)
+      inventory/         # graph queries (grammar, lexis — FalkorDB)
   models/
     english/             # SQLModel table classes
   schemas/               # request/response schemas (separate from models)
   crud/
     english/
       records/           # SQLite query functions
-      inventory/         # Kùzu query functions
+      inventory/         # FalkorDB query functions
   core/
     config.py            # pydantic Settings (reads .env)
     sqlite.py            # engine + get_session() dependency
-    kuzu.py              # db + get_graph_conn() + init_graph_schema()
+    falkordb.py          # client + get_graph_conn() + init_graph_schema()
 docs/                    # AI-facing governance docs (this file)
 tests/
 ```
@@ -52,7 +52,7 @@ tests/
 - **Max depth**: 5 components from root (root not counted).
 - **Naming**: `snake_case` only — lowercase letters and underscores; no
   hyphens. Core files named after the technology they wrap
-  (`sqlite.py`, `kuzu.py`, `config.py`). Router and model files use
+  (`sqlite.py`, `falkordb.py`, `config.py`). Router and model files use
   a singular domain noun (`grammar.py`, `practice.py`).
 - **Exceptions**: `.git`, `.cursor`, `.venv`, `__pycache__`,
   `.pytest_cache`, `.ruff_cache`
@@ -62,11 +62,12 @@ tests/
 ## 3. Run, build, test
 
 - **Install deps**: `uv sync`
-- **Dev server**: `uvicorn main:app --reload` (SQLite + Kùzu are
-  embedded; optionally set `SQLITE_PATH`, `KUZU_PATH` in `.env`)
-- **Docker / docker compose**: You must set `API_PORT` (and
-  `KUZU_EXPLORER_PORT` if using kuzu-explorer) in `.env`; no defaults
-  are provided in the repo.
+- **Dev server**: `uvicorn main:app --reload --port 58000` (SQLite embedded;
+  set `SQLITE_PATH` in `.env`; FalkorDB: `FALKORDB_HOST`, `FALKORDB_PORT`
+  default localhost:56379)
+- **Docker / docker compose**: API exposed on host port 58000 by default
+  (`API_PORT` in `.env` to override). FalkorDB is not exposed to the host.
+  Set `FALKORDB_BROWSER_PORT` in `.env` if using falkordb-browser.
 - **Test**: `pytest`
 - **Lint / format**: `ruff check .` / `ruff format .`
 - **Type check**: `ty check`
@@ -78,7 +79,7 @@ tests/
 | Command | Purpose |
 | --- | --- |
 | `uv sync` | Install / sync dependencies |
-| `uvicorn main:app --reload` | Dev server (watch mode) |
+| `uvicorn main:app --reload --port 58000` | Dev server (watch mode) |
 | `pytest` | Run all tests |
 | `pytest -k <name>` | Run a specific test |
 | `ruff check .` | Lint |
