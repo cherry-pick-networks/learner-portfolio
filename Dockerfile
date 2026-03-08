@@ -16,6 +16,7 @@ COPY app ./app
 RUN useradd --create-home appuser && chown -R appuser:appuser /app
 USER appuser
 
+ENV API_PORT=54321
 EXPOSE 54321
 ENV PYTHONUNBUFFERED=1
-CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "54321"]
+CMD ["sh", "-c", "uv run uvicorn main:app --host 0.0.0.0 --port ${API_PORT}"]
