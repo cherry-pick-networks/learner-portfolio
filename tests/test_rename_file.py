@@ -14,13 +14,14 @@ def test_output_txt_name_at_root() -> None:
 
 
 def test_output_txt_name_same_stem_different_ext_no_collision() -> None:
-    """Same stem, different extensions -> distinct output filenames."""
-    assert output_txt_name(Path("grammar/a.hwp")) == "grammar_a_hwp.txt"
-    assert output_txt_name(Path("grammar/a.pdf")) == "grammar_a_pdf.txt"
+    """Same stem, different extensions -> distinct output filenames (no folder prefix)."""
+    assert output_txt_name(Path("grammar/a.hwp")) == "a_hwp.txt"
+    assert output_txt_name(Path("grammar/a.pdf")) == "a_pdf.txt"
 
 
 def test_output_txt_name_subfolder() -> None:
+    """Output name is original file stem only."""
     assert (
         output_txt_name(Path("grammar/present_simple.pdf"))
-        == "grammar_present_simple_pdf.txt"
+        == "present_simple_pdf.txt"
     )

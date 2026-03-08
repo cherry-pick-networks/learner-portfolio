@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "54321:54321"
+    env_file:
+      - .env
+    environment:
+      SQLITE_PATH: /data/learner_portfolio.db
+      KUZU_PATH: /data/knowledge_graph
+    volumes:
+      - app_data:/data
+
+volumes:
+  app_data: {}
