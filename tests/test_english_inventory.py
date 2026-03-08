@@ -55,4 +55,4 @@ def test_list_lexis_by_cefr() -> None:
     response = client.get("/english/inventory/lexis/b1")
     assert response.status_code == 200
     data = response.json()
-    assert data[0]["lemma"] == "apple"
+    assert data[0]["headword"] == "apple"

@@ -236,7 +236,7 @@ def test_create_writing_assessment_ok() -> None:
         "session_at": _NOW,
         "content": 8,
         "grammar": 7,
-        "lexis": 8,
+        "lexical_resource": 8,
         "organization": 7,
         "english_total": 30,
     }

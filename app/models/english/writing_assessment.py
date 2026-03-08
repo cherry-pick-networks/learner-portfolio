@@ -13,7 +13,7 @@ class WritingAssessmentBase(SQLModel):
     task_ref: str | None = Field(default=None)
     content: int
     grammar: int
-    lexis: int
+    lexical_resource: int
     organization: int
     english_total: int
     cefr_writing: CefrLevel | None = Field(default=None)
