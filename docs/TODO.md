@@ -32,10 +32,10 @@ API contract: auto-generated OpenAPI from FastAPI (GET /docs).
 
 - **SQLite** — relational storage. Client: `app/core/sqlite.py`
   (`get_session()`). Schema via SQLModel. Env: `SQLITE_PATH`
-  (default: `./learner_portfolio.db`; no external server required).
+  (default: `./data/learner_portfolio.db`; no external server required).
 - **Kùzu** — graph storage for the knowledge domain (grammar and lexis
   nodes). Client: `app/core/kuzu.py` (`get_graph_conn()`). Env:
-  `KUZU_PATH` (default: `./knowledge_graph`; embedded, no server required).
+  `KUZU_PATH` (default: `./data/knowledge_graph`; embedded, no server required).
 
 ---
 

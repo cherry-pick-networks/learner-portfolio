@@ -33,3 +33,6 @@ Thumbs.db
 
 # Temp
 temp/
+
+# DB files (SQLite, Kùzu)
+data/

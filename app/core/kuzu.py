@@ -22,6 +22,12 @@ _NODE_DDLS = [
         "CREATE NODE TABLE IF NOT EXISTS CefrLevel"
         "(code STRING, PRIMARY KEY (code))"
     ),
+    (
+        "CREATE NODE TABLE IF NOT EXISTS Passage"
+        "(passage_id STRING, year INT64, grade_group STRING,"
+        " curriculum STRING, subject STRING, publisher STRING, unit STRING,"
+        " text STRING, source_file STRING, PRIMARY KEY (passage_id))"
+    ),
 ]
 
 _REL_DDLS = [

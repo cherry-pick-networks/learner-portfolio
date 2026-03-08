@@ -2,9 +2,9 @@ services:
   app:
     build: .
     ports:
-      - "${API_PORT:-54321}:${API_PORT:-54321}"
+      - "${API_PORT}:8000"
     environment:
-      API_PORT: ${API_PORT:-54321}
+      API_PORT: "8000"
       SQLITE_PATH: /data/learner_portfolio.db
       KUZU_PATH: /data/knowledge_graph
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -13,6 +13,15 @@ services:
       GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:-}
     volumes:
       - app_data:/data
+
+  kuzu-explorer:
+    image: kuzudb/explorer:latest
+    ports:
+      - "${KUZU_EXPLORER_PORT}:8000"
+    volumes:
+      - app_data:/database
+    environment:
+      KUZU_FILE: knowledge_graph
 
 volumes:
   app_data: {}

@@ -17,7 +17,6 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN useradd --create-home appuser && chown -R appuser:appuser /app
 RUN chmod +x /app/entrypoint.sh
 
-ENV API_PORT=54321
-EXPOSE 54321
+EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENTRYPOINT ["/app/entrypoint.sh"]

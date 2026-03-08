@@ -64,6 +64,9 @@ tests/
 - **Install deps**: `uv sync`
 - **Dev server**: `uvicorn main:app --reload` (SQLite + Kùzu are
   embedded; optionally set `SQLITE_PATH`, `KUZU_PATH` in `.env`)
+- **Docker / docker compose**: You must set `API_PORT` (and
+  `KUZU_EXPLORER_PORT` if using kuzu-explorer) in `.env`; no defaults
+  are provided in the repo.
 - **Test**: `pytest`
 - **Lint / format**: `ruff check .` / `ruff format .`
 - **Type check**: `ty check`
