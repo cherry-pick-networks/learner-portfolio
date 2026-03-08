@@ -62,12 +62,12 @@ tests/
 ## 3. Run, build, test
 
 - **Install deps**: `uv sync`
-- **Dev server**: `uvicorn main:app --reload --port 58000` (SQLite embedded;
-  set `SQLITE_PATH` in `.env`; FalkorDB: `FALKORDB_HOST`, `FALKORDB_PORT`
+- **Dev server**: `uvicorn main:app --reload` (SQLite embedded; set
+  `SQLITE_PATH` in `.env`; FalkorDB: `FALKORDB_HOST`, `FALKORDB_PORT`
   default localhost:56379)
-- **Docker / docker compose**: API exposed on host port 58000 by default
-  (`API_PORT` in `.env` to override). FalkorDB is not exposed to the host.
-  Set `FALKORDB_BROWSER_PORT` in `.env` if using falkordb-browser.
+- **Docker / docker compose**: Set `API_PORT` (and optionally
+  `FALKORDB_BROWSER_PORT` for falkordb-browser) in `.env`; no defaults in
+  the repo. FalkorDB is not exposed to the host.
 - **Test**: `pytest`
 - **Lint / format**: `ruff check .` / `ruff format .`
 - **Type check**: `ty check`
@@ -79,7 +79,7 @@ tests/
 | Command | Purpose |
 | --- | --- |
 | `uv sync` | Install / sync dependencies |
-| `uvicorn main:app --reload --port 58000` | Dev server (watch mode) |
+| `uvicorn main:app --reload` | Dev server (watch mode) |
 | `pytest` | Run all tests |
 | `pytest -k <name>` | Run a specific test |
 | `ruff check .` | Lint |
