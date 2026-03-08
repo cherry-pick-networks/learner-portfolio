@@ -10,7 +10,7 @@ class GrammarItem(BaseModel):
 
 
 _QUERY = (
-    "MATCH (g:GrammarItem)-[:AT_LEVEL]->(l:CefrLevel {code: $cefr}) "
+    "MATCH (g:GrammarItem)-[:GRAMMATICAL_LEVEL]->(l:CefrLevel {code: $cefr}) "
     "RETURN g.guideword AS guideword, g.source AS source"
 )
 

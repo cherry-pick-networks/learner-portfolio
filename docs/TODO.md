@@ -22,6 +22,7 @@ API contract: auto-generated OpenAPI from FastAPI (GET /docs).
 | **app/models/english/** | SQLModel table classes for the English domain. |
 | **app/schemas/** | Request/response schemas when separate from models. |
 | **app/crud/** | DB query functions for SQLite and FalkorDB. |
+| **app/crud/english/inventory/testlet.py** | Testlet graph: upsert Source, ExamPassage, ExamQuestion (FalkorDB). |
 | **app/core/config.py** | Pydantic Settings; reads env vars from `.env`. |
 | **app/core/sqlite.py** | SQLAlchemy engine + `get_session()` FastAPI dependency. |
 | **app/core/falkordb.py** | FalkorDB client + `get_graph_conn()` + `init_graph_schema()`. |
@@ -33,10 +34,11 @@ API contract: auto-generated OpenAPI from FastAPI (GET /docs).
 - **SQLite** — relational storage. Client: `app/core/sqlite.py`
   (`get_session()`). Schema via SQLModel. Env: `SQLITE_PATH`
   (default: `./data/learner_portfolio.db`; no external server required).
-- **FalkorDB** — graph storage for the knowledge domain (grammar and lexis
-  nodes). Client: `app/core/falkordb.py` (`get_graph_conn()`). Env:
-  `FALKORDB_HOST`, `FALKORDB_PORT`, `FALKORDB_GRAPH` (default: localhost:56379,
-  graph `knowledge_graph`). When using Docker, FalkorDB is not exposed to the host.
+- **FalkorDB** — graph storage for the knowledge domain (grammar, lexis, testlet
+  source/passage/question nodes). Client: `app/core/falkordb.py`
+  (`get_graph_conn()`). Env: `FALKORDB_HOST`, `FALKORDB_PORT`, `FALKORDB_GRAPH`
+  (default: localhost:56379, graph `knowledge_graph`). When using Docker,
+  FalkorDB is not exposed to the host. Testlet seed: `uv run python scripts/seed_testlet.py`.
 
 ---
 
