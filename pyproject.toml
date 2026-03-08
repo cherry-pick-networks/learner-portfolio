@@ -26,6 +26,12 @@ line-length = 80
 [tool.ruff.lint]
 select = ["E", "F", "I"]
 
+[tool.ty.src]
+exclude = ["scripts", "tests/scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [dependency-groups]
 dev = [
     "httpx>=0.28.1",
