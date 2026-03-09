@@ -6,8 +6,9 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock ./
 RUN uv sync --no-dev --no-install-project
 
-COPY main.py ./
+COPY main.py alembic.ini ./
 COPY app ./app
+COPY alembic ./alembic
 COPY entrypoint.sh /app/entrypoint.sh
 
 RUN useradd --create-home appuser && chown -R appuser:appuser /app
