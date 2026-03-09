@@ -5,10 +5,13 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+from alembic.config import Config
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from sqlalchemy import text
 from sqlmodel import Session, SQLModel
 
+from alembic import command
 from app.core.config import settings
 from app.core.falkordb import (
     GraphDbUnavailableError,
@@ -16,7 +19,7 @@ from app.core.falkordb import (
     init_graph_schema,
     reset_graph,
 )
-from app.core.sqlite import auto_migrate, engine
+from app.core.sqlite import engine
 from app.models.common.concept import Concept  # noqa: F401
 from app.models.common.link_type import LinkType  # noqa: F401
 from app.models.common.object_type import ObjectType  # noqa: F401
@@ -45,12 +48,17 @@ from app.routers import admin, english
 async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
     logging.info("db_reset_on_startup=%s", settings.db_reset_on_startup)
     Path(settings.sqlite_path).parent.mkdir(parents=True, exist_ok=True)
+    alembic_cfg = Config("alembic.ini")
+    alembic_cfg.set_main_option(
+        "sqlalchemy.url", f"sqlite:///{settings.sqlite_path}"
+    )
     if settings.db_reset_on_startup:
         SQLModel.metadata.drop_all(engine)
+        with engine.connect() as conn:
+            conn.execute(text("DROP TABLE IF EXISTS alembic_version"))
+            conn.commit()
         logging.warning("DB reset on startup: tables dropped")
-    SQLModel.metadata.create_all(engine)
-    if not settings.db_reset_on_startup:
-        auto_migrate(engine)
+    command.upgrade(alembic_cfg, "head")
     try:
         if settings.db_reset_on_startup:
             reset_graph()
