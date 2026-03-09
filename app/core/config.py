@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
+
+_ROOT = Path(__file__).resolve().parent.parent.parent
+_ENV_FILE = _ROOT / ".env"
 
 
 class Settings(BaseSettings):
@@ -13,7 +18,7 @@ class Settings(BaseSettings):
     entra_tenant_id: str = ""
     entra_client_id: str = ""
 
-    model_config = {"env_file": ".env"}
+    model_config = {"env_file": _ENV_FILE}
 
 
 settings = Settings()
