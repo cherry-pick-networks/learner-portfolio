@@ -1,4 +1,4 @@
-"""Init Source + Testlet + Item from flat JSON (temp/kice_json/*.json)."""
+"""Init Source + Testlet + Item from flat JSON (temp/.json/testlet/*.json)."""
 
 from __future__ import annotations
 

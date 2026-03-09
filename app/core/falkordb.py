@@ -24,6 +24,7 @@ _INDEX_QUERIES = [
     "CREATE INDEX FOR (n:Item) ON (n.item_id)",
     "CREATE INDEX FOR (n:LexisItem) ON (n.item_id)",
     "CREATE INDEX FOR (n:LexicalSet) ON (n.set_id)",
+    "CREATE INDEX FOR (n:GrammaticalSet) ON (n.set_id)",
 ]
 
 

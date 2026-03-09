@@ -27,6 +27,7 @@ from app.models.english.exam_period import (  # noqa: F401
     LearnerExamOverride,
 )
 from app.models.english.fsrs_config import FsrsConfig  # noqa: F401
+from app.models.english.grammar_item import GrammarItem  # noqa: F401
 from app.models.english.learner_profile import LearnerProfile  # noqa: F401
 from app.models.english.lesson_log import LessonLog  # noqa: F401
 from app.models.english.lexis_corpus_freq import (

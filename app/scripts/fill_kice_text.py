@@ -7,7 +7,9 @@ import re
 import sys
 from pathlib import Path
 
-KICE_JSON_DIR = Path(__file__).resolve().parents[2] / "temp" / "kice_json"
+KICE_JSON_DIR = (
+    Path(__file__).resolve().parents[2] / "temp" / ".json" / "testlet"
+)
 
 
 def _split_stem(stem: str) -> tuple[str, str]:
@@ -57,10 +59,15 @@ def main() -> None:
     if not json_dir.exists():
         print(f"JSON dir not found: {json_dir}", file=sys.stderr)
         sys.exit(1)
+    exam_pattern = re.compile(r"^\d{4}_\d{2}_")
     files = (
         sys.argv[1:]
         if len(sys.argv) > 1
-        else [p.name for p in json_dir.glob("*.json")]
+        else [
+            p.name
+            for p in json_dir.glob("*.json")
+            if exam_pattern.match(p.stem)
+        ]
     )
     total = 0
     for name in sorted(files):

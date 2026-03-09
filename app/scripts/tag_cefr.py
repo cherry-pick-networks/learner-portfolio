@@ -262,7 +262,7 @@ def main() -> None:
 
     _ROOT = Path(__file__).resolve().parent.parent.parent
     _LEXIS_PATH = _ROOT / "temp" / "data" / "english" / "lexis_profile.tsv"
-    _KICE_JSON_DIR = _ROOT / "temp" / "kice_json"
+    _KICE_JSON_DIR = _ROOT / "temp" / ".json" / "testlet"
 
     if not _LEXIS_PATH.exists():
         print(f"Lexis profile not found: {_LEXIS_PATH}", file=sys.stderr)
@@ -275,7 +275,10 @@ def main() -> None:
     nlp = _get_nlp()
     dry_run = "--dry-run" in sys.argv
     total = 0
-    for path in sorted(_KICE_JSON_DIR.glob("*.json")):
+    exam_pattern = re.compile(r"^\d{4}_\d{2}_")
+    for path in sorted(
+        p for p in _KICE_JSON_DIR.glob("*.json") if exam_pattern.match(p.stem)
+    ):
         n = process_file(path, lexis_map, nlp, dry_run=dry_run)
         total += n
         print(f"{'[dry-run] ' if dry_run else ''}{path.name}: {n} tags")

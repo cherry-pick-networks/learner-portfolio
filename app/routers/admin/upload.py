@@ -17,6 +17,9 @@ from app.scripts.init_english_profile import (
     init_grammar_profile,
     init_lexis_profile,
 )
+from app.scripts.init_grammar_unit import (
+    init_from_json as init_grammar_unit_from_json,
+)
 from app.scripts.init_lexis_item import (
     init_from_json as init_lexis_item_from_json,
 )
@@ -123,6 +126,37 @@ def upload_lexis_item(
                     "filename": upload.filename or "lexis.json",
                     "lexical_sets": n_lists,
                     "lexis_items": n_items,
+                }
+            )
+        except Exception as e:
+            path.unlink(missing_ok=True)
+            return JSONResponse(
+                status_code=500,
+                content={"detail": str(e), "filename": upload.filename},
+            )
+        finally:
+            path.unlink(missing_ok=True)
+    return {"uploaded": len(results), "results": results}
+
+
+@router.post("/grammar-unit")
+def upload_grammar_unit(
+    files: list[UploadFile] = File(...),
+    graph: falkordb.Graph = Depends(get_graph_conn),
+):
+    """Upload grammar-*.json to load GrammaticalSet and GrammarProfile."""
+    results: list[dict] = []
+    for upload in files:
+        path = _save_upload_to_temp(upload)
+        try:
+            n_sets, n_items = init_grammar_unit_from_json(
+                path, graph, dry_run=False
+            )
+            results.append(
+                {
+                    "filename": upload.filename or "grammar.json",
+                    "grammatical_sets": n_sets,
+                    "grammar_links": n_items,
                 }
             )
         except Exception as e:

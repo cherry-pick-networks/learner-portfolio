@@ -1,4 +1,4 @@
-"""Fill p{n}_answer in temp/kice_json/*.json from KICE answer sheet PDFs."""
+"""Fill p{n}_answer in temp/.json/testlet/*.json from KICE answer sheet PDFs."""
 
 from __future__ import annotations
 
@@ -9,7 +9,9 @@ from pathlib import Path
 import fitz
 
 INBOX_BASE = Path("/mnt/c/inbox/kice")
-KICE_JSON_DIR = Path(__file__).resolve().parents[2] / "temp" / "kice_json"
+KICE_JSON_DIR = (
+    Path(__file__).resolve().parents[2] / "temp" / ".json" / "testlet"
+)
 
 # source_id (year_month_csat_form) -> (folder_name, answer_file_pattern)
 FOLDER_PATTERNS: dict[str, tuple[str, str | list[str]]] = {
@@ -162,8 +164,11 @@ def main() -> None:
         print(f"JSON dir not found: {json_dir}")
         return
 
+    exam_pattern = re.compile(r"^\d{4}_\d{2}_")
     total = 0
-    for json_path in sorted(json_dir.glob("*.json")):
+    for json_path in sorted(
+        p for p in json_dir.glob("*.json") if exam_pattern.match(p.stem)
+    ):
         source_id = json_path.stem
         answers = get_answers_for_source(source_id)
         if not answers:
