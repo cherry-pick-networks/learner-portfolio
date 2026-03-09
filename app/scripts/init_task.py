@@ -65,24 +65,19 @@ def _long_group_items(
     return items
 
 
-def init_from_json(
-    json_path: Path,
+def _process_one_source(
+    data: dict[str, Any],
     session: Session,
     graph: falkordb.Graph,
-    *,
-    dry_run: bool = False,
+    dry_run: bool,
 ) -> tuple[int, int, list[tuple[str, str]]]:
-    """Load flat JSON; upsert Source, Tasks, TaskItems.
+    """Process a single source dict; upsert Source, Tasks, TaskItems.
 
-    Returns (n_sources, n_tasks, [(task_id, text), ...]) for upserted
-    tasks with non-empty text (for grammar tagging).
+    Returns (n_sources, n_tasks, [(task_id, text), ...]) for this source.
     """
     from app.crud.english.inventory import task
     from app.crud.english.inventory import task_item as task_item_crud
     from app.crud.english.records import source as source_crud
-
-    with open(json_path, encoding="utf-8") as f:
-        data = json.load(f)
 
     source_id = str(data.get("source_id") or "").strip()
     if not source_id:
@@ -211,3 +206,37 @@ def init_from_json(
         task_count += 1
 
     return 1, task_count, tagged_list
+
+
+def init_from_json(
+    json_path: Path,
+    session: Session,
+    graph: falkordb.Graph,
+    *,
+    dry_run: bool = False,
+) -> tuple[int, int, list[tuple[str, str]]]:
+    """Load flat JSON; upsert Source, Tasks, TaskItems.
+
+    Accepts a single object or a list of objects (e.g. all_test_chunks.json).
+    Returns (n_sources, n_tasks, [(task_id, text), ...]) for upserted
+    tasks with non-empty text (for grammar tagging).
+    """
+    with open(json_path, encoding="utf-8") as f:
+        raw = json.load(f)
+
+    if isinstance(raw, list):
+        total_sources = 0
+        total_tasks = 0
+        tagged_list: list[tuple[str, str]] = []
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            n_sources, n_tasks, tagged = _process_one_source(
+                item, session, graph, dry_run
+            )
+            total_sources += n_sources
+            total_tasks += n_tasks
+            tagged_list.extend(tagged)
+        return total_sources, total_tasks, tagged_list
+
+    return _process_one_source(raw, session, graph, dry_run)

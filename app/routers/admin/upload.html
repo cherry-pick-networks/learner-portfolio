@@ -20,10 +20,22 @@
   <p>Upload CSV files. Access controlled by Cloudflare.</p>
 
   <section>
-    <h2>Lexis</h2>
+    <h2>Lexis Profile</h2>
     <label>CSV/TSV file(s) <input type="file" id="lexis-files" name="files" multiple accept=".csv,.tsv"></label>
-    <button type="button" onclick="upload('lexis')">Upload lexis</button>
+    <button type="button" onclick="upload('lexis')">Upload lexis profile</button>
     <div id="lexis-result" class="result"></div>
+  </section>
+  <section>
+    <h2>Lexis Item</h2>
+    <label>JSON file(s) <input type="file" id="lexis-item-files" name="files" multiple accept=".json"></label>
+    <button type="button" onclick="upload('lexis-item')">Upload lexis item</button>
+    <div id="lexis-item-result" class="result"></div>
+  </section>
+  <section>
+    <h2>Lexical Set</h2>
+    <label>JSON file(s) <input type="file" id="lexical-set-files" name="files" multiple accept=".json"></label>
+    <button type="button" onclick="upload('lexical-set')">Upload lexical set</button>
+    <div id="lexical-set-result" class="result"></div>
   </section>
   <section>
     <h2>Grammar</h2>

@@ -116,7 +116,25 @@ def upload_lexis_item(
     files: list[UploadFile] = File(...),
     graph: falkordb.Graph = Depends(get_graph_conn),
 ):
-    """Upload lexis-*.json to load LexicalSet and LexisItem (FalkorDB)."""
+    """Upload lexis-*.json to load LexisItem (FalkorDB)."""
+    return _upload_lexis_json(files, graph, "lexis.json")
+
+
+@router.post("/lexical-set")
+def upload_lexical_set(
+    files: list[UploadFile] = File(...),
+    graph: falkordb.Graph = Depends(get_graph_conn),
+):
+    """Upload lexis-*.json to load LexicalSet (FalkorDB). Same file format as lexis-item."""
+    return _upload_lexis_json(files, graph, "lexis.json")
+
+
+def _upload_lexis_json(
+    files: list[UploadFile],
+    graph: falkordb.Graph,
+    default_filename: str,
+) -> dict:
+    """Shared handler: load LexicalSet and LexisItem from lexis-*.json."""
     results: list[dict] = []
     for upload in files:
         path = _save_upload_to_temp(upload)
@@ -126,7 +144,7 @@ def upload_lexis_item(
             )
             results.append(
                 {
-                    "filename": upload.filename or "lexis.json",
+                    "filename": upload.filename or default_filename,
                     "lexical_sets": n_lists,
                     "lexis_items": n_items,
                 }
