@@ -20,7 +20,7 @@ _QUERY = (
 
 
 def list_by_cefr(graph: falkordb.Graph, cefr: str) -> list[LexisProfile]:
-    result = graph.query(_QUERY, params={"cefr": cefr.upper()})
+    result = graph.query(_QUERY, params={"cefr": cefr.lower()})
     return [
         LexisProfile(
             headword=row[0],
@@ -73,7 +73,7 @@ def upsert_lexis_profile(
             edge_q,
             params={
                 "headword": headword,
-                "cefr": cefr.upper(),
+                "cefr": cefr.lower(),
                 "freq": freq,
                 "nb_doc": nb_doc,
             },

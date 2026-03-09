@@ -12,7 +12,7 @@ from sqlmodel import Session
 _ROOT = Path(__file__).resolve().parent.parent
 _DATA_DIR = _ROOT / "data" / "english"
 _TEMP_DIR = _ROOT.parent / "temp" / "english_profile_load"
-_LEVELS = ("a1", "a2", "b1", "b2", "c1")
+_LEVELS = ("a1", "a2", "b1", "b2", "c1", "c2")
 _KNOWN_LEVIS_COLS = frozenset(
     {"word", "tag"}
     | {f"level_freq@{lev}" for lev in _LEVELS}
@@ -50,12 +50,11 @@ def init_lexis_profile(
     path: Path | None = None,
 ) -> None:
     """Load lexis from TSV into FalkorDB and SQLite lexis_profile."""
-    from app.crud.english.inventory import cefr, lexis
+    from app.crud.english.inventory import lexis
     from app.models.english.lexis_profile import (
         LexisProfile as LexisProfileTable,
     )
 
-    cefr.ensure_cefr_levels(graph)
     src = path or DEFAULT_LEXIS_PATH
     if not src.exists():
         return
@@ -118,12 +117,11 @@ def init_grammar_profile(
     path: Path | None = None,
 ) -> None:
     """Load grammar from CSV into FalkorDB and SQLite grammar_profile."""
-    from app.crud.english.inventory import cefr, grammar
+    from app.crud.english.inventory import grammar
     from app.models.english.grammar_profile import (
         GrammarProfile as GrammarProfileTable,
     )
 
-    cefr.ensure_cefr_levels(graph)
     src = path or DEFAULT_GRAMMAR_PATH
     if not src.exists():
         return
@@ -135,7 +133,7 @@ def init_grammar_profile(
             reader = csv.DictReader(f)
             for row in reader:
                 guideword = (row.get("guideword") or "").strip()
-                level = (row.get("Level") or "").strip().upper()
+                level = (row.get("Level") or "").strip().lower()
                 if not guideword or not level:
                     continue
                 super_category = (

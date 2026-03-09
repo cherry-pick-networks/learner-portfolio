@@ -20,12 +20,18 @@ API contract: auto-generated OpenAPI from FastAPI (GET /docs).
 | **app/routers/english/records/** | Transaction data: practice, writing assessment, acquisition, learner proficiency, needs analysis, task outcome. |
 | **app/routers/english/inventory/** | Graph queries: grammar and lexis nodes (FalkorDB). |
 | **app/models/english/** | SQLModel table classes for the English domain. |
+| **app/models/common/** | Domain-agnostic classification: ObjectType, Concept, LinkType (SQLite). |
 | **app/schemas/** | Request/response schemas when separate from models. |
 | **app/crud/** | DB query functions for SQLite and FalkorDB. |
-| **app/crud/english/inventory/testlet.py** | Testlet graph: upsert Source, Testlet (passage + questions in one node) (FalkorDB). |
+| **app/crud/english/inventory/testlet.py** | Testlet graph (FalkorDB); Source is in SQLite. |
+| **app/models/english/source.py** | Source table (exam source metadata). |
+| **app/crud/english/records/source.py** | Source CRUD (SQLite). |
 | **app/core/config.py** | Pydantic Settings; reads env vars from `.env`. |
 | **app/core/sqlite.py** | SQLAlchemy engine + `get_session()` FastAPI dependency. |
 | **app/core/falkordb.py** | FalkorDB client + `get_graph_conn()` + `init_graph_schema()`. |
+| **app/core/init_english_inventory.py** | Init grammar/lexis from TSV/CSV; calls `cefr.ensure_cefr_levels(graph, session)` so CefrLevel nodes come from Concept table. |
+| **app/data/common/** | TOML: object_types.toml, concepts.toml (CEFR a1..c2, english_source testlet/book), link_types.toml. |
+| **scripts/init_concepts.py** | Load config TOML into SQLite (ObjectType, Concept, LinkType). Scheme-agnostic. Run: `uv run python scripts/init_concepts.py`. |
 
 ---
 
@@ -34,11 +40,12 @@ API contract: auto-generated OpenAPI from FastAPI (GET /docs).
 - **SQLite** — relational storage. Client: `app/core/sqlite.py`
   (`get_session()`). Schema via SQLModel. Env: `SQLITE_PATH`
   (default: `./data/learner_portfolio.db`; no external server required).
-- **FalkorDB** — graph storage for the knowledge domain (grammar, lexis, Source and
-  Testlet nodes; Testlet holds passage + questions). Client: `app/core/falkordb.py`
+- **FalkorDB** — graph storage for the knowledge domain (grammar, lexis, Testlet
+  nodes; Testlet holds passage + questions and references Source via source_id).
+  Source metadata lives in SQLite. Client: `app/core/falkordb.py`
   (`get_graph_conn()`). Env: `FALKORDB_HOST`, `FALKORDB_PORT`, `FALKORDB_GRAPH`
   (default: localhost:56379, graph `knowledge_graph`). When using Docker,
-  FalkorDB is not exposed to the host. Testlet seed: `uv run python scripts/seed_testlet.py`.
+  FalkorDB is not exposed to the host. Testlet init: `uv run python scripts/init_testlet.py`.
 
 ---
 

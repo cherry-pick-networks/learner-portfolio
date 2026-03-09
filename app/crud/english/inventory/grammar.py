@@ -19,7 +19,7 @@ _QUERY = (
 
 
 def list_by_cefr(graph: falkordb.Graph, cefr: str) -> list[GrammarProfile]:
-    result = graph.query(_QUERY, params={"cefr": cefr.upper()})
+    result = graph.query(_QUERY, params={"cefr": cefr.lower()})
     return [
         GrammarProfile(
             guideword=row[0],
@@ -54,7 +54,7 @@ def upsert_grammar_profile(
         q,
         params={
             "guideword": guideword,
-            "cefr": cefr.upper(),
+            "cefr": cefr.lower(),
             "super_category": super_category or "",
             "sub_category": sub_category or "",
             "type": type_ or "",

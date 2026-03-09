@@ -141,7 +141,7 @@ def test_create_learner_proficiency_ok() -> None:
     payload = {
         "learner_id": "u1",
         "skill": "reading",
-        "cefr_level": "B2",
+        "cefr_level": "b2",
     }
     ret = LearnerProficiencyRead.model_validate({"id": 1, **payload})
     with patch(
@@ -192,7 +192,7 @@ def test_list_needs_analysis_with_filter() -> None:
         "app.routers.english.records.needs_analysis.crud.list_needs_analysis"
     ) as m:
         m.return_value = []
-        resp = client.get(f"{_BASE}/needs-analysis?cefr_level=B1")
+        resp = client.get(f"{_BASE}/needs-analysis?cefr_level=b1")
     assert resp.status_code == 200
 
 

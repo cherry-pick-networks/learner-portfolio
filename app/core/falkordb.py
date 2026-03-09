@@ -20,7 +20,6 @@ _INDEX_QUERIES = [
     "CREATE INDEX FOR (n:CefrLevel) ON (n.code)",
     "CREATE INDEX FOR (n:GrammarProfile) ON (n.guideword)",
     "CREATE INDEX FOR (n:LexisProfile) ON (n.headword)",
-    "CREATE INDEX FOR (n:Source) ON (n.source_id)",
     "CREATE INDEX FOR (n:Testlet) ON (n.testlet_id)",
 ]
 
@@ -58,7 +57,7 @@ def get_graph_conn() -> Generator[falkordb.Graph, None, None]:
 
 
 def reset_graph() -> None:
-    """Delete the graph and clear cached client so next use gets a fresh graph."""
+    """Delete the graph and clear cached client for next use."""
     global _client, _graph
     _ensure_db()
     with _init_lock:

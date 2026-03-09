@@ -16,17 +16,21 @@ from app.core.falkordb import (
     init_graph_schema,
     reset_graph,
 )
-from app.core.init_english_profile import (
+from app.core.init_english_inventory import (
     init_grammar_profile,
     init_lexis_profile,
 )
 from app.core.sqlite import engine
+from app.models.common.concept import Concept  # noqa: F401
+from app.models.common.link_type import LinkType  # noqa: F401
+from app.models.common.object_type import ObjectType  # noqa: F401
 from app.models.english.grammar_profile import (  # noqa: F401
     GrammarProfile as GrammarProfileTable,
 )
 from app.models.english.lexis_profile import (  # noqa: F401
     LexisProfile as LexisProfileTable,
 )
+from app.models.english.source import Source  # noqa: F401
 from app.routers import english
 
 
@@ -44,6 +48,9 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
         init_graph_schema()
         graph = next(get_graph_conn())
         with Session(engine) as session:
+            from app.crud.english.inventory import cefr
+
+            cefr.ensure_cefr_levels(graph, session)
             init_lexis_profile(graph, session)
             init_grammar_profile(graph, session)
     except GraphDbUnavailableError as e:
