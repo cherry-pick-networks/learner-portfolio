@@ -41,9 +41,8 @@ from app.models.english.writing_assessment import (
 
 config = context.config
 # CLI: use env; app (command.upgrade): url set in main
-if not config.get_main_option("sqlalchemy.url") or config.get_main_option(
-    "sqlalchemy.url"
-).startswith("driver:"):
+_url = config.get_main_option("sqlalchemy.url")
+if not _url or _url.startswith("driver:"):
     _path = os.getenv("SQLITE_PATH", "./learner_portfolio.db")
     config.set_main_option("sqlalchemy.url", f"sqlite:///{_path}")
 target_metadata = SQLModel.metadata
@@ -69,7 +68,8 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     section = config.get_section(config.config_ini_section, {})
-    section["sqlalchemy.url"] = config.get_main_option("sqlalchemy.url")
+    _online_url = config.get_main_option("sqlalchemy.url")
+    section["sqlalchemy.url"] = _online_url or "sqlite:///"
     connectable = engine_from_config(
         section,
         prefix="sqlalchemy.",
