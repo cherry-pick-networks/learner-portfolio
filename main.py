@@ -48,7 +48,8 @@ from app.routers import admin, english
 async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
     logging.info("db_reset_on_startup=%s", settings.db_reset_on_startup)
     Path(settings.sqlite_path).parent.mkdir(parents=True, exist_ok=True)
-    alembic_cfg = Config("alembic.ini")
+    _project_root = Path(__file__).resolve().parent
+    alembic_cfg = Config(str(_project_root / "alembic.ini"))
     alembic_cfg.set_main_option(
         "sqlalchemy.url", f"sqlite:///{settings.sqlite_path}"
     )
