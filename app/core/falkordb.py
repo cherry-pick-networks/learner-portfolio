@@ -23,7 +23,7 @@ _INDEX_QUERIES = [
     "CREATE INDEX FOR (n:Testlet) ON (n.testlet_id)",
     "CREATE INDEX FOR (n:Item) ON (n.item_id)",
     "CREATE INDEX FOR (n:LexisItem) ON (n.item_id)",
-    "CREATE INDEX FOR (n:VocabList) ON (n.list_id)",
+    "CREATE INDEX FOR (n:LexicalSet) ON (n.set_id)",
 ]
 
 

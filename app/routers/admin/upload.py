@@ -110,7 +110,7 @@ def upload_lexis_item(
     files: list[UploadFile] = File(...),
     graph: falkordb.Graph = Depends(get_graph_conn),
 ):
-    """Upload lexis-*.json to load VocabList and LexisItem (FalkorDB)."""
+    """Upload lexis-*.json to load LexicalSet and LexisItem (FalkorDB)."""
     results: list[dict] = []
     for upload in files:
         path = _save_upload_to_temp(upload)
@@ -121,7 +121,7 @@ def upload_lexis_item(
             results.append(
                 {
                     "filename": upload.filename or "lexis.json",
-                    "vocab_lists": n_lists,
+                    "lexical_sets": n_lists,
                     "lexis_items": n_items,
                 }
             )

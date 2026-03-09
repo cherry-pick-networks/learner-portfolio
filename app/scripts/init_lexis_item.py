@@ -1,4 +1,4 @@
-"""Init LexisItem and VocabList (FalkorDB) from lexis JSON files."""
+"""Init LexisItem and LexicalSet (FalkorDB) from lexis JSON files."""
 
 from __future__ import annotations
 
@@ -24,30 +24,30 @@ def init_from_json(
     *,
     dry_run: bool = False,
 ) -> tuple[int, int]:
-    """Load one JSON; upsert VocabList and LexisItem. Returns (lists, items)."""
-    from app.crud.english.inventory import lexis, lexis_item, vocab_list
+    """Load one JSON; upsert LexicalSet and LexisItem. Returns (sets, items)."""
+    from app.crud.english.inventory import lexis, lexis_item, lexical_set
 
     with open(path, encoding="utf-8") as f:
         items = json.load(f)
     if not items:
         return 0, 0
 
-    book = _book_slug(path)
-    list_ids_seen: set[str] = set()
+    source = _book_slug(path)
+    set_ids_seen: set[str] = set()
     item_count = 0
 
     for raw in items:
         index = raw.get("index")
         headword = (raw.get("headword") or "").strip()
-        day = int(raw.get("day", 0))
+        unit_num = int(raw.get("day", 0))
         definition = (raw.get("oewnDef") or "").strip()
         pos = (raw.get("oewnPos") or "").strip() or None
         if not headword:
             continue
 
-        item_id = f"{book}-{index}"
-        list_id = f"{book}-day-{day:02d}"
-        list_ids_seen.add(list_id)
+        item_id = f"{source}-{index}"
+        set_id = f"{source}-day-{unit_num:02d}"
+        set_ids_seen.add(set_id)
 
         if not dry_run:
             lexis_item.upsert_lexis_item(
@@ -61,25 +61,24 @@ def init_from_json(
             if cefr:
                 lexis_item.link_cefr(graph, item_id=item_id, cefr=cefr)
 
-            vocab_list.upsert_vocab_list(
+            lexical_set.upsert_lexical_set(
                 graph,
-                list_id=list_id,
-                name=f"{book} day {day:02d}",
-                book=book,
-                day_num=day,
+                set_id=set_id,
+                source=source,
+                unit_num=unit_num,
             )
-            vocab_list.link_item(graph, list_id=list_id, item_id=item_id)
+            lexical_set.link_item(graph, set_id=set_id, item_id=item_id)
 
         item_count += 1
 
-    return len(list_ids_seen), item_count
+    return len(set_ids_seen), item_count
 
 
 def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Init VocabList and LexisItem (FalkorDB) from JSON"
+        description="Init LexicalSet and LexisItem (FalkorDB) from JSON"
     )
     parser.add_argument(
         "--input-dir",
@@ -130,5 +129,5 @@ def main() -> int:
         total_lists += n_lists
         total_items += n_items
         print(f"{path.name}: {n_items} items, {n_lists} lists")
-    print(f"Done: {total_lists} vocab lists, {total_items} lexis items")
+    print(f"Done: {total_lists} lexical sets, {total_items} lexis items")
     return 0

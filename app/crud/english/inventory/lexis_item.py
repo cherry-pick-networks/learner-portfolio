@@ -1,4 +1,4 @@
-"""LexisItem graph: definition-level items linked to VocabList and CefrLevel."""
+"""LexisItem graph: definition-level items linked to LexicalSet and CefrLevel."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 
 class LexisItemSchema(BaseModel):
-    """Response schema for a single vocab-list lexis item."""
+    """Response schema for a single lexical-set lexis item."""
 
     item_id: str
     headword: str
@@ -16,8 +16,8 @@ class LexisItemSchema(BaseModel):
     cefr: str | None = None
 
 
-_LIST_BY_VOCAB_QUERY = (
-    "MATCH (v:VocabList {list_id: $list_id})-[:CONTAINS]->(i:LexisItem) "
+_LIST_BY_LEXICAL_SET_QUERY = (
+    "MATCH (s:LexicalSet {set_id: $set_id})-[:CONTAINS]->(i:LexisItem) "
     "OPTIONAL MATCH (i)-[:LEXIS_LEVEL]->(c:CefrLevel) "
     "RETURN i.item_id, i.headword, i.pos, i.definition, c.code"
 )
@@ -65,11 +65,11 @@ def link_cefr(
     graph.query(q, params={"item_id": item_id, "cefr": cefr.lower()})
 
 
-def list_by_vocab_list(
-    graph: falkordb.Graph, list_id: str
+def list_by_lexical_set(
+    graph: falkordb.Graph, set_id: str
 ) -> list[LexisItemSchema]:
-    """Return LexisItems in the given VocabList with optional CEFR."""
-    result = graph.query(_LIST_BY_VOCAB_QUERY, params={"list_id": list_id})
+    """Return LexisItems in the given LexicalSet with optional CEFR."""
+    result = graph.query(_LIST_BY_LEXICAL_SET_QUERY, params={"set_id": set_id})
     return [
         LexisItemSchema(
             item_id=row[0],

@@ -7,25 +7,25 @@ from app.core.auth import verify_token
 from app.core.falkordb import get_graph_conn
 from app.crud.english.inventory.lexis_item import (
     LexisItemSchema,
-    list_by_vocab_list,
+    list_by_lexical_set,
 )
-from app.crud.english.inventory.vocab_list import VocabListMeta, list_all
+from app.crud.english.inventory.lexical_set import LexicalSetMeta, list_all
 
-router = APIRouter(prefix="/vocab-list", tags=["inventory_vocab_list"])
+router = APIRouter(prefix="/lexical-set", tags=["inventory_lexical_set"])
 
 
-@router.get("", response_model=list[VocabListMeta])
-def list_vocab_lists(
+@router.get("", response_model=list[LexicalSetMeta])
+def list_lexical_sets(
     graph: falkordb.Graph = Depends(get_graph_conn),
     _: dict[str, object] = Depends(verify_token),
-) -> list[VocabListMeta]:
+) -> list[LexicalSetMeta]:
     return list_all(graph)
 
 
-@router.get("/{list_id}", response_model=list[LexisItemSchema])
-def get_vocab_list_items(
-    list_id: str,
+@router.get("/{set_id}", response_model=list[LexisItemSchema])
+def get_lexical_set_items(
+    set_id: str,
     graph: falkordb.Graph = Depends(get_graph_conn),
     _: dict[str, object] = Depends(verify_token),
 ) -> list[LexisItemSchema]:
-    return list_by_vocab_list(graph, list_id)
+    return list_by_lexical_set(graph, set_id)
