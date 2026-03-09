@@ -133,7 +133,7 @@ def _upload_lexis_json(
     files: list[UploadFile],
     graph: falkordb.Graph,
     default_filename: str,
-) -> dict:
+) -> dict | JSONResponse:
     """Shared handler: load LexicalSet and LexisItem from lexis-*.json."""
     results: list[dict] = []
     for upload in files:
