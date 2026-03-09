@@ -1,4 +1,4 @@
-"""Extract English-only passages from temp/ 본문 text files into temp/english_only/."""
+"""Extract English-only passages from temp/ 본문 into temp/english_only/."""
 
 from __future__ import annotations
 
@@ -13,20 +13,46 @@ _DEFAULT_OUT = _ROOT / "temp" / "english_only"
 
 
 def _is_mostly_korean(line: str) -> bool:
-    """Return True if non-empty line is 50% or more Korean by character count."""
+    """True if line starts with Korean or is 20%+ Korean by character count."""
     s = line.strip()
     if not s:
         return False
+    # Drop lines that start with a Korean character (annotation/caption).
+    first = s[0]
+    if "\uac00" <= first <= "\ud7a3":
+        return True
     korean_chars = sum(1 for c in s if "\uac00" <= c <= "\ud7a3")
-    return korean_chars / len(s) >= 0.5
+    return korean_chars / len(s) >= 0.2
 
 
-# Match "본문 2-1 – Title" or "본문 1 – Title" style section headers (drop entire line).
+# "본문 2-1 – Title" / "본문 1 – Title" section headers (drop).
 _RE_BONMUN_HEADING = re.compile(r"^\s*본문\s+[\d\-]+\s*[–\-]\s*.+$")
+
+# Noise: page sep, standalone digits, publication header, [IMAGE].
+_RE_PAGE_SEP = re.compile(r"^-\s*\d+\s*-$")
+_RE_STANDALONE_DIGITS = re.compile(r"^\d+$")
+_RE_PUBLICATION_HEADER = re.compile(r"^\d{4}\s*개정[│|]")
+_RE_IMAGE_MARKER = re.compile(r"^\[IMAGE\]$", re.IGNORECASE)
+
+
+def _is_noise_line(line: str) -> bool:
+    """True if line is structural noise (page sep, digits, header, [IMAGE])."""
+    s = line.strip()
+    if not s:
+        return False
+    if _RE_PAGE_SEP.match(s):
+        return True
+    if _RE_STANDALONE_DIGITS.match(s):
+        return True
+    if _RE_PUBLICATION_HEADER.match(s):
+        return True
+    if _RE_IMAGE_MARKER.match(s):
+        return True
+    return False
 
 
 def _remove_korean_inline(text: str) -> str:
-    """Remove trailing Korean (and adjacent spaces) on a line, e.g. '*word 한글뜻'."""
+    """Remove trailing Korean (and spaces) on a line, e.g. '*word 한글뜻'."""
     return re.sub(r"[\uac00-\ud7a3\s]+$", "", text).rstrip()
 
 
@@ -39,14 +65,37 @@ def _process_line(line: str) -> str | None:
     """Return processed line or None to drop the line."""
     if _is_bonmun_heading(line):
         return None
+    if _is_noise_line(line):
+        return None
     if _is_mostly_korean(line):
         return None
     cleaned = _remove_korean_inline(line)
     return cleaned if cleaned else None
 
 
+def _ends_sentence(s: str) -> bool:
+    """True if s ends with . ? ! : ; (optionally + closing quote)."""
+    return bool(re.search(r"[.?!:;][\"'»]?\s*$", s))
+
+
+def _rejoin_fragments(lines: list[str]) -> list[str]:
+    """Merge PDF fragments: prev not sentence-end, current lower/quote."""
+    out: list[str] = []
+    for line in lines:
+        if not line:
+            out.append(line)
+            continue
+        if out and out[-1] and not _ends_sentence(out[-1]):
+            first = line[0]
+            if first.islower() or first in "\"'(":
+                out[-1] = out[-1] + " " + line
+                continue
+        out.append(line)
+    return out
+
+
 def extract_english_lines(lines: list[str]) -> list[str]:
-    """Process lines: drop mostly-Korean lines, strip inline Korean, collapse blank lines."""
+    """Drop Korean/noise, strip inline Korean, collapse blanks, rejoin."""
     out: list[str] = []
     prev_blank = False
     for line in lines:
@@ -58,6 +107,7 @@ def extract_english_lines(lines: list[str]) -> list[str]:
             continue
         prev_blank = False
         out.append(processed)
+    out = _rejoin_fragments(out)
     # Trim trailing blank lines
     while out and out[-1] == "":
         out.pop()
@@ -87,9 +137,9 @@ def run(src: Path, out_root: Path, dry_run: bool) -> None:
         result = extract_english_lines(lines)
         out_path = out_root / fp.relative_to(src)
         if dry_run:
-            print(
-                f"[dry-run] {fp.relative_to(_ROOT)} -> {out_path.relative_to(_ROOT)}"
-            )
+            rel_src = fp.relative_to(_ROOT)
+            rel_out = out_path.relative_to(_ROOT)
+            print(f"[dry-run] {rel_src} -> {rel_out}")
             continue
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(

@@ -55,7 +55,13 @@
         method: 'POST',
         body: fd
       }).then(function(r) {
-        return r.json().then(function(data) {
+        return r.text().then(function(text) {
+          var data;
+          try { data = JSON.parse(text); } catch (e) {
+            resultEl.textContent = (r.status ? r.status + ' ' : '') + (text || 'Not JSON');
+            resultEl.className = 'result error';
+            return;
+          }
           if (r.ok) resultEl.textContent = JSON.stringify(data, null, 2);
           else {
             resultEl.textContent = (data.detail || r.status) + '\n' + JSON.stringify(data, null, 2);

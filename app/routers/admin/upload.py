@@ -7,7 +7,7 @@ from pathlib import Path
 
 import falkordb
 from fastapi import APIRouter, Depends, File, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from sqlmodel import Session
 
 from app.core.falkordb import get_graph_conn
@@ -61,6 +61,12 @@ def upload_lexis(
                     "rows_loaded": rows,
                 }
             )
+        except Exception as e:
+            path.unlink(missing_ok=True)
+            return JSONResponse(
+                status_code=500,
+                content={"detail": str(e), "filename": upload.filename},
+            )
         finally:
             path.unlink(missing_ok=True)
     return {"uploaded": len(results), "results": results}
@@ -83,6 +89,12 @@ def upload_grammar(
                     "filename": upload.filename or "grammar.csv",
                     "rows_loaded": rows,
                 }
+            )
+        except Exception as e:
+            path.unlink(missing_ok=True)
+            return JSONResponse(
+                status_code=500,
+                content={"detail": str(e), "filename": upload.filename},
             )
         finally:
             path.unlink(missing_ok=True)
@@ -109,6 +121,12 @@ def upload_testlet(
                     "sources": sources,
                     "testlets": testlets,
                 }
+            )
+        except Exception as e:
+            path.unlink(missing_ok=True)
+            return JSONResponse(
+                status_code=500,
+                content={"detail": str(e), "filename": upload.filename},
             )
         finally:
             path.unlink(missing_ok=True)
