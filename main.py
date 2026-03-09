@@ -28,7 +28,6 @@ from app.models.english.lexis_profile import (  # noqa: F401
 )
 from app.models.english.source import Source  # noqa: F401
 from app.routers import admin, english
-from app.scripts.init_english_profile import init_english_profile
 
 
 @asynccontextmanager
@@ -49,11 +48,6 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
             from app.crud.english.inventory import cefr
 
             cefr.ensure_cefr_levels(graph, session)
-            if settings.db_reset_on_startup:
-                logging.info(
-                    "Loading English profile (grammar/lexis) into graph"
-                )
-                init_english_profile(graph, session)
     except GraphDbUnavailableError as e:
         logging.warning("FalkorDB unavailable at startup: %s", e)
     yield

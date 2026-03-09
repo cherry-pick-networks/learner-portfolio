@@ -1,4 +1,4 @@
-"""Init Source (SQLite) and Testlet (FalkorDB) from questions CSV. Used by CLI and admin upload API."""
+"""Init Source + Testlet from questions CSV. CLI and admin upload."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ def init_from_csv(
     *,
     dry_run: bool = False,
 ) -> tuple[int, int]:
-    """Load one questions.csv; upsert Source to SQLite, Testlets to graph. Returns (sources, testlets)."""
+    """Load one CSV; upsert Source + Testlets. Returns (sources, testlets)."""
     from app.crud.english.inventory import testlet
     from app.crud.english.records import source as source_crud
 

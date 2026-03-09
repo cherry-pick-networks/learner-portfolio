@@ -8,7 +8,6 @@ RUN uv sync --no-dev --no-install-project
 
 COPY main.py ./
 COPY app ./app
-COPY data ./data
 COPY entrypoint.sh /app/entrypoint.sh
 
 RUN useradd --create-home appuser && chown -R appuser:appuser /app

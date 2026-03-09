@@ -50,7 +50,7 @@ def init_lexis_profile(
     *,
     path: Path | None = None,
 ) -> int:
-    """Load lexis CSV into FalkorDB and SQLite lexis_profile. Returns rows loaded."""
+    """Load lexis CSV into FalkorDB and SQLite. Returns rows loaded."""
     from app.crud.english.inventory import lexis
     from app.models.english.lexis_profile import (
         LexisProfile as LexisProfileTable,
@@ -124,7 +124,7 @@ def init_grammar_profile(
     *,
     path: Path | None = None,
 ) -> int:
-    """Load grammar CSV into FalkorDB and SQLite grammar_profile. Returns rows loaded."""
+    """Load grammar CSV into FalkorDB and SQLite. Returns rows loaded."""
     from app.crud.english.inventory import grammar
     from app.models.english.grammar_profile import (
         GrammarProfile as GrammarProfileTable,
