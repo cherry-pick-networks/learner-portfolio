@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 
 import falkordb
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlmodel import Session
 
@@ -220,13 +220,35 @@ def upload_grammar_item(
     return {"uploaded": len(results), "results": results}
 
 
+def _enqueue_tagging(
+    background_tasks: BackgroundTasks,
+    graph: falkordb.Graph,
+    tagged_list: list[tuple[str, str]],
+) -> str:
+    """Schedule tag_tasks as a background job; return status string."""
+    if not tagged_list or not settings.openai_api_key:
+        return "skipped"
+    background_tasks.add_task(
+        tag_tasks,
+        graph,
+        tagged_list,
+        grammar_csv_path=None,
+        openai_api_key=settings.openai_api_key,
+    )
+    return "queued"
+
+
 @router.post("/chunk")
 def upload_chunk(
+    background_tasks: BackgroundTasks,
     files: list[UploadFile] = File(...),
     graph: falkordb.Graph = Depends(get_graph_conn),
     session: Session = Depends(get_session),
 ):
-    """Upload chunk JSON (source, id, article, questions[]) to load Source and Task."""
+    """Upload chunk JSON (source, id, article, questions[]) to load Source and Task.
+
+    Grammar tagging runs as a background task after the response is returned.
+    """
     results: list[dict] = []
     for upload in files:
         path = _save_upload_to_temp(upload)
@@ -234,18 +256,13 @@ def upload_chunk(
             sources, tasks, tagged_list = init_chunk_from_json(
                 path, session, graph, dry_run=False
             )
-            grammar_links = tag_tasks(
-                graph,
-                tagged_list,
-                grammar_csv_path=None,
-                openai_api_key=settings.openai_api_key or "",
-            )
+            tagging = _enqueue_tagging(background_tasks, graph, tagged_list)
             results.append(
                 {
                     "filename": upload.filename or "chunks.json",
                     "sources": sources,
                     "tasks": tasks,
-                    "grammar_links": grammar_links,
+                    "grammar_tagging": tagging,
                 }
             )
         except Exception as e:
@@ -261,11 +278,15 @@ def upload_chunk(
 
 @router.post("/task")
 def upload_task(
+    background_tasks: BackgroundTasks,
     files: list[UploadFile] = File(...),
     graph: falkordb.Graph = Depends(get_graph_conn),
     session: Session = Depends(get_session),
 ):
-    """Upload flat JSON to load Source (SQLite) and Task (FalkorDB)."""
+    """Upload flat JSON to load Source (SQLite) and Task (FalkorDB).
+
+    Grammar tagging runs as a background task after the response is returned.
+    """
     results: list[dict] = []
     for upload in files:
         path = _save_upload_to_temp(upload)
@@ -273,18 +294,13 @@ def upload_task(
             sources, tasks, tagged_list = init_from_json(
                 path, session, graph, dry_run=False
             )
-            grammar_links = tag_tasks(
-                graph,
-                tagged_list,
-                grammar_csv_path=None,
-                openai_api_key=settings.openai_api_key or "",
-            )
+            tagging = _enqueue_tagging(background_tasks, graph, tagged_list)
             results.append(
                 {
                     "filename": upload.filename or "questions.json",
                     "sources": sources,
                     "tasks": tasks,
-                    "grammar_links": grammar_links,
+                    "grammar_tagging": tagging,
                 }
             )
         except Exception as e:
