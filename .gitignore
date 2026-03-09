@@ -37,6 +37,7 @@ temp/
 # Local-only (not for commit)
 scripts/
 tests/scripts/
+!app/scripts/
 
 # DB files (SQLite, Kùzu)
 data/
