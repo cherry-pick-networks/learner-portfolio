@@ -5,7 +5,7 @@ from sqlmodel import Field, SQLModel
 
 class FsrsConfigBase(SQLModel):
     learner_id: str = Field(unique=True, index=True)
-    w_vector: str  # JSON array of 19 floats (FSRS-5 default)
+    model_weights: str  # JSON array of 19 floats (FSRS-5 default)
 
 
 class FsrsConfig(FsrsConfigBase, table=True):

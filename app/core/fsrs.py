@@ -28,7 +28,8 @@ def schedule_review(
     """Compute next practice date from attempt quality (1=Again..4=Easy).
 
     Returns:
-        (item_state_json, due_date, memory_stability, item_difficulty, retrievability)
+        (item_state_json, due_date, memory_stability, item_difficulty,
+         retrievability)
     """
     card = Card.from_json(item_state_json)
     rating = Rating(attempt_quality)

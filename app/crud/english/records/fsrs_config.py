@@ -12,14 +12,14 @@ def get_fsrs_config(session: Session, learner_id: str) -> FsrsConfig | None:
 
 
 def upsert_fsrs_config(
-    session: Session, learner_id: str, w_vector: str
+    session: Session, learner_id: str, model_weights: str
 ) -> FsrsConfig:
     row = get_fsrs_config(session, learner_id)
     if row is None:
-        row = FsrsConfig(learner_id=learner_id, w_vector=w_vector)
+        row = FsrsConfig(learner_id=learner_id, model_weights=model_weights)
         session.add(row)
     else:
-        row.w_vector = w_vector
+        row.model_weights = model_weights
         session.add(row)
     session.commit()
     session.refresh(row)

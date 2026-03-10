@@ -127,39 +127,39 @@ def _upsert(
         select(FsrsConfig).where(FsrsConfig.learner_id == learner_id)
     ).first()
     if config:
-        model_weights_json = config.w_vector
+        model_weights_json = config.model_weights
     if row is None:
-        fsrs_state = initialise_item_state()
+        item_state = initialise_item_state()
         (
-            fsrs_state,
+            item_state,
             due_date,
             memory_stability,
             item_difficulty,
             retrievability,
-        ) = schedule_review(fsrs_state, attempt_quality, model_weights_json)
+        ) = schedule_review(item_state, attempt_quality, model_weights_json)
         row = LearnerItem(
             learner_id=learner_id,
             item_type=item_type,
             item_id=item_id,
-            fsrs_state=fsrs_state,
-            stability=memory_stability,
-            difficulty=item_difficulty,
+            item_state=item_state,
+            memory_stability=memory_stability,
+            item_difficulty=item_difficulty,
             due_date=due_date,
             retrievability=retrievability,
         )
         session.add(row)
     else:
-        fsrs_state = row.fsrs_state or initialise_item_state()
+        item_state = row.item_state or initialise_item_state()
         (
-            fsrs_state,
+            item_state,
             due_date,
             memory_stability,
             item_difficulty,
             retrievability,
-        ) = schedule_review(fsrs_state, attempt_quality, model_weights_json)
-        row.fsrs_state = fsrs_state
-        row.stability = memory_stability
-        row.difficulty = item_difficulty
+        ) = schedule_review(item_state, attempt_quality, model_weights_json)
+        row.item_state = item_state
+        row.memory_stability = memory_stability
+        row.item_difficulty = item_difficulty
         row.due_date = due_date
         row.retrievability = retrievability
         session.add(row)

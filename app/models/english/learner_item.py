@@ -10,9 +10,9 @@ class LearnerItemBase(SQLModel):
     learner_id: str = Field(index=True)
     item_type: str = Field(index=True)  # "task_item" | "lexis"
     item_id: str = Field(index=True)
-    fsrs_state: str | None = Field(default=None)  # FSRS Card as JSON
-    stability: float
-    difficulty: float
+    item_state: str | None = Field(default=None)  # FSRS item state as JSON
+    memory_stability: float
+    item_difficulty: float
     due_date: datetime = Field(index=True)
     retrievability: float | None = Field(default=None)
 

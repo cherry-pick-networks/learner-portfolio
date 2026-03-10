@@ -178,9 +178,9 @@ def test_lexis_review_schedule_post_ok() -> None:
         id=1,
         learner_id="u1",
         item_id="lex-item-1",
-        fsrs_state=None,
-        stability=1.0,
-        difficulty=1.0,
+        item_state=None,
+        memory_stability=1.0,
+        item_difficulty=1.0,
         due_date=datetime(2026, 3, 11),
         retrievability=0.9,
     )

@@ -21,9 +21,9 @@ def _to_read(row: LearnerItem) -> LexisReviewScheduleRead:
         id=row.id,  # type: ignore[arg-type]
         learner_id=row.learner_id,
         item_id=row.item_id,
-        item_state=row.fsrs_state,
-        memory_stability=row.stability,
-        item_difficulty=row.difficulty,
+        item_state=row.item_state,
+        memory_stability=row.memory_stability,
+        item_difficulty=row.item_difficulty,
         due_date=row.due_date,
         retrievability=row.retrievability,
     )
