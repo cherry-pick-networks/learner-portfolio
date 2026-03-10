@@ -21,7 +21,7 @@ def create_recall_event(
 def list_unprocessed_recall_events(session: Session) -> list[RecallEvent]:
     return list(
         session.exec(
-            select(RecallEvent).where(RecallEvent.processed == False)
+            select(RecallEvent).where(RecallEvent.processed.is_(False))
         ).all()
     )
 

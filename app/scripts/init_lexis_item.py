@@ -6,16 +6,10 @@ import json
 import sys
 from pathlib import Path
 
+from app.scripts._lexis_item_helpers import book_slug
+
 _ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_LEXIS_INPUT = _ROOT / "temp" / "lexis"
-
-
-def _book_slug(path: Path) -> str:
-    """e.g. lexis-middle-basic.json -> middle-basic."""
-    stem = path.stem
-    if stem.startswith("lexis-"):
-        return stem[6:]
-    return stem
 
 
 def init_from_json(
@@ -33,7 +27,7 @@ def init_from_json(
     if not items:
         return 0, 0
 
-    source = _book_slug(path)
+    source = book_slug(path)
     set_ids_seen: set[str] = set()
     item_count = 0
 
@@ -78,62 +72,9 @@ def init_from_json(
     return len(set_ids_seen), item_count
 
 
-def main() -> int:
-    import argparse
+if __name__ == "__main__":
+    import sys
 
-    parser = argparse.ArgumentParser(
-        description="Init LexisSet (SQLite) and LexisItem (FalkorDB) from JSON"
-    )
-    parser.add_argument(
-        "--input-dir",
-        type=Path,
-        default=DEFAULT_LEXIS_INPUT,
-        help="Directory containing lexis-*.json files",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Only discover files and count, do not write",
-    )
-    args = parser.parse_args()
+    from app.scripts._lexis_item_cli import main
 
-    input_dir = args.input_dir.resolve()
-    if not input_dir.is_dir():
-        print(f"Not a directory: {input_dir}", file=sys.stderr)
-        return 1
-
-    json_paths = sorted(input_dir.glob("lexis-*.json"))
-    if not json_paths:
-        print(f"No lexis-*.json under {input_dir}", file=sys.stderr)
-        return 1
-
-    if args.dry_run:
-        for p in json_paths:
-            with open(p, encoding="utf-8") as f:
-                data = json.load(f)
-            n = len(data) if isinstance(data, list) else 0
-            print(f"  {p.name}: {n} items")
-        print(f"Would init {len(json_paths)} files (dry run)")
-        return 0
-
-    try:
-        from app.core.falkordb import get_graph_conn
-        from app.core.sqlite import get_session
-    except ImportError:
-        print(
-            "Run from repo root and ensure app is on PYTHONPATH.",
-            file=sys.stderr,
-        )
-        return 1
-
-    graph = next(get_graph_conn())
-    session = next(get_session())
-    total_lists = 0
-    total_items = 0
-    for path in json_paths:
-        n_lists, n_items = init_from_json(path, graph, session, dry_run=False)
-        total_lists += n_lists
-        total_items += n_items
-        print(f"{path.name}: {n_items} items, {n_lists} lists")
-    print(f"Done: {total_lists} lexis sets, {total_items} lexis items")
-    return 0
+    sys.exit(main())

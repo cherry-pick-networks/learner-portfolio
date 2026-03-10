@@ -1,168 +1,29 @@
+"""LearnerItem FSRS: re-exports from review_schedule and lexis_review_schedule."""  # noqa: E501
+
 from __future__ import annotations
 
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from app.crud.english.records._fsrs_upsert import (
+    ITEM_TYPE_LEXIS,
+    ITEM_TYPE_TASK_ITEM,
+)
+from app.crud.english.records.lexis_review_schedule import (
+    list_due_lexis_items,
+    list_lexis_review_schedule,
+    upsert_lexis_review_schedule,
+)
+from app.crud.english.records.review_schedule import (
+    list_due_items,
+    list_review_schedule,
+    upsert_review_schedule,
+)
 
-from sqlmodel import Session, select
-
-from app.core.fsrs import initialise_item_state, schedule_review
-from app.models.english.fsrs_config import FsrsConfig
-from app.models.english.learner_item import LearnerItem
-
-ITEM_TYPE_LEXIS = "lexis"
-ITEM_TYPE_TASK_ITEM = "task_item"
-
-
-def list_review_schedule(
-    session: Session, learner_id: str
-) -> list[LearnerItem]:
-    """List all task_item learner items for a learner."""
-    return list(
-        session.exec(
-            select(LearnerItem)
-            .where(LearnerItem.learner_id == learner_id)
-            .where(LearnerItem.item_type == ITEM_TYPE_TASK_ITEM)
-        ).all()
-    )
-
-
-def list_due_items(
-    session: Session,
-    learner_id: str,
-    as_of: datetime | None = None,
-) -> list[LearnerItem]:
-    """List due task_item items (due_date <= as_of)."""
-    if as_of is None:
-        as_of = datetime.now(ZoneInfo("UTC"))
-    return list(
-        session.exec(
-            select(LearnerItem)
-            .where(LearnerItem.learner_id == learner_id)
-            .where(LearnerItem.item_type == ITEM_TYPE_TASK_ITEM)
-            .where(LearnerItem.due_date <= as_of)
-        ).all()
-    )
-
-
-def upsert_review_schedule(
-    session: Session,
-    learner_id: str,
-    task_item_id: str,
-    attempt_quality: int,
-) -> LearnerItem:
-    """Upsert FSRS state for a task_item (item_type=task_item)."""
-    return _upsert(
-        session,
-        learner_id=learner_id,
-        item_type=ITEM_TYPE_TASK_ITEM,
-        item_id=task_item_id,
-        attempt_quality=attempt_quality,
-    )
-
-
-def list_lexis_review_schedule(
-    session: Session, learner_id: str
-) -> list[LearnerItem]:
-    """List all lexis learner items for a learner."""
-    return list(
-        session.exec(
-            select(LearnerItem)
-            .where(LearnerItem.learner_id == learner_id)
-            .where(LearnerItem.item_type == ITEM_TYPE_LEXIS)
-        ).all()
-    )
-
-
-def list_due_lexis_items(
-    session: Session,
-    learner_id: str,
-    as_of: datetime | None = None,
-) -> list[LearnerItem]:
-    """List due lexis items (due_date <= as_of)."""
-    if as_of is None:
-        as_of = datetime.now(ZoneInfo("UTC"))
-    return list(
-        session.exec(
-            select(LearnerItem)
-            .where(LearnerItem.learner_id == learner_id)
-            .where(LearnerItem.item_type == ITEM_TYPE_LEXIS)
-            .where(LearnerItem.due_date <= as_of)
-        ).all()
-    )
-
-
-def upsert_lexis_review_schedule(
-    session: Session,
-    learner_id: str,
-    item_id: str,
-    attempt_quality: int,
-) -> LearnerItem:
-    """Upsert FSRS state for a lexis item (item_type=lexis)."""
-    return _upsert(
-        session,
-        learner_id=learner_id,
-        item_type=ITEM_TYPE_LEXIS,
-        item_id=item_id,
-        attempt_quality=attempt_quality,
-    )
-
-
-def _upsert(
-    session: Session,
-    *,
-    learner_id: str,
-    item_type: str,
-    item_id: str,
-    attempt_quality: int,
-) -> LearnerItem:
-    row = session.exec(
-        select(LearnerItem).where(
-            LearnerItem.learner_id == learner_id,
-            LearnerItem.item_type == item_type,
-            LearnerItem.item_id == item_id,
-        )
-    ).first()
-    model_weights_json: str | None = None
-    config = session.exec(
-        select(FsrsConfig).where(FsrsConfig.learner_id == learner_id)
-    ).first()
-    if config:
-        model_weights_json = config.model_weights
-    if row is None:
-        item_state = initialise_item_state()
-        (
-            item_state,
-            due_date,
-            memory_stability,
-            item_difficulty,
-            retrievability,
-        ) = schedule_review(item_state, attempt_quality, model_weights_json)
-        row = LearnerItem(
-            learner_id=learner_id,
-            item_type=item_type,
-            item_id=item_id,
-            item_state=item_state,
-            memory_stability=memory_stability,
-            item_difficulty=item_difficulty,
-            due_date=due_date,
-            retrievability=retrievability,
-        )
-        session.add(row)
-    else:
-        item_state = row.item_state or initialise_item_state()
-        (
-            item_state,
-            due_date,
-            memory_stability,
-            item_difficulty,
-            retrievability,
-        ) = schedule_review(item_state, attempt_quality, model_weights_json)
-        row.item_state = item_state
-        row.memory_stability = memory_stability
-        row.item_difficulty = item_difficulty
-        row.due_date = due_date
-        row.retrievability = retrievability
-        session.add(row)
-    session.commit()
-    session.refresh(row)
-    return row
+__all__ = [
+    "ITEM_TYPE_LEXIS",
+    "ITEM_TYPE_TASK_ITEM",
+    "list_due_items",
+    "list_due_lexis_items",
+    "list_lexis_review_schedule",
+    "list_review_schedule",
+    "upsert_lexis_review_schedule",
+    "upsert_review_schedule",
+]

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -20,7 +18,9 @@ class CurriculumSession(SQLModel, table=True):
     session_number: int
     topic: str = ""
 
-    units: list[CurriculumSessionUnit] = Relationship(back_populates="session")
+    units: list["CurriculumSessionUnit"] = Relationship(
+        back_populates="session"
+    )
 
 
 class CurriculumSessionUnit(SQLModel, table=True):
