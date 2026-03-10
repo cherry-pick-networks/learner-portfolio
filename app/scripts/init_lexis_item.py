@@ -25,7 +25,7 @@ def init_from_json(
     dry_run: bool = False,
 ) -> tuple[int, int]:
     """Load one JSON; upsert LexicalSet and LexisItem. Returns (sets, items)."""
-    from app.crud.english.inventory import lexis, lexis_item, lexical_set
+    from app.crud.english.inventory import lexical_set, lexis, lexis_item
 
     with open(path, encoding="utf-8") as f:
         items = json.load(f)

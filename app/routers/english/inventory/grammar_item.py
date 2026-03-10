@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import falkordb
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
 from app.core.auth import verify_token
+from app.core.falkordb import get_graph_conn
 from app.core.sqlite import get_session
-from app.crud.english.inventory import grammar_item as crud
-from app.models.english.grammar_item import GrammarItemRead
+from app.crud.english.inventory import curriculum as crud
+from app.crud.english.inventory.grammar import GrammarProfile
+from app.models.english.curriculum import GrammarItemRead
+from app.services.english.grammar_session import list_profiles_for_session
 
 router = APIRouter(prefix="/grammar-items", tags=["inventory_grammar_item"])
 
@@ -37,3 +41,23 @@ def get_session(
     if item is None:
         raise HTTPException(status_code=404, detail="Not found")
     return item
+
+
+@router.get(
+    "/{curriculum_id}/{session_number}/profiles",
+    response_model=list[GrammarProfile],
+)
+def list_session_profiles(
+    curriculum_id: str,
+    session_number: int,
+    session: Session = Depends(get_session),
+    graph: falkordb.Graph = Depends(get_graph_conn),
+    _: dict[str, object] = Depends(verify_token),
+) -> list[GrammarProfile]:
+    """Return GrammarProfiles to study for this curriculum session."""
+    item = crud.get(session, curriculum_id, session_number)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Not found")
+    return list_profiles_for_session(
+        curriculum_id, session_number, session, graph
+    )

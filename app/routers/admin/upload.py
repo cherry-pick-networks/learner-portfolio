@@ -13,6 +13,7 @@ from sqlmodel import Session
 from app.core.config import settings
 from app.core.falkordb import get_graph_conn
 from app.core.sqlite import get_session
+from app.scripts.init_chunk import init_from_json as init_chunk_from_json
 from app.scripts.init_english_profile import (
     init_grammar_profile,
     init_lexis_profile,
@@ -26,9 +27,9 @@ from app.scripts.init_grammar_unit import (
 from app.scripts.init_lexis_item import (
     init_from_json as init_lexis_item_from_json,
 )
-from app.scripts.init_chunk import init_from_json as init_chunk_from_json
 from app.scripts.init_task import init_from_json
 from app.scripts.tag_grammar import tag_tasks
+from app.scripts.tag_lexis import tag_tasks as tag_lexis_tasks
 
 router = APIRouter()
 
@@ -225,16 +226,18 @@ def _enqueue_tagging(
     graph: falkordb.Graph,
     tagged_list: list[tuple[str, str]],
 ) -> str:
-    """Schedule tag_tasks as a background job; return status string."""
-    if not tagged_list or not settings.openai_api_key:
+    """Schedule grammar and lexis tag_tasks as background jobs; return status."""
+    if not tagged_list:
         return "skipped"
-    background_tasks.add_task(
-        tag_tasks,
-        graph,
-        tagged_list,
-        grammar_csv_path=None,
-        openai_api_key=settings.openai_api_key,
-    )
+    if settings.openai_api_key:
+        background_tasks.add_task(
+            tag_tasks,
+            graph,
+            tagged_list,
+            grammar_csv_path=None,
+            openai_api_key=settings.openai_api_key,
+        )
+    background_tasks.add_task(tag_lexis_tasks, graph, tagged_list)
     return "queued"
 
 

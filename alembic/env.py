@@ -11,6 +11,11 @@ from app.models.common.concept import Concept  # noqa: F401
 from app.models.common.link_type import LinkType  # noqa: F401
 from app.models.common.object_type import ObjectType  # noqa: F401
 from app.models.english.acquisition import Acquisition  # noqa: F401
+from app.models.english.curriculum import (  # noqa: F401
+    Curriculum,
+    CurriculumSession,
+    CurriculumSessionUnit,
+)
 from app.models.english.error_prior import ErrorPrior  # noqa: F401
 from app.models.english.essay_outcome import EssayOutcome  # noqa: F401
 from app.models.english.exam_period import (  # noqa: F401
@@ -18,7 +23,7 @@ from app.models.english.exam_period import (  # noqa: F401
     LearnerExamOverride,
 )
 from app.models.english.fsrs_config import FsrsConfig  # noqa: F401
-from app.models.english.grammar_item import GrammarItem  # noqa: F401
+from app.models.english.learner_item import LearnerItem  # noqa: F401
 from app.models.english.learner_proficiency import (
     LearnerProficiency,  # noqa: F401
 )
@@ -32,7 +37,6 @@ from app.models.english.practice import Practice  # noqa: F401
 from app.models.english.question_log import QuestionLog  # noqa: F401
 from app.models.english.recall_event import RecallEvent  # noqa: F401
 from app.models.english.response_log import ResponseLog  # noqa: F401
-from app.models.english.review_schedule import ReviewSchedule  # noqa: F401
 from app.models.english.source import Source  # noqa: F401
 from app.models.english.task_outcome import TaskOutcome  # noqa: F401
 from app.models.english.writing_assessment import (

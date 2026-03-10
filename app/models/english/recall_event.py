@@ -8,7 +8,7 @@ from app.models.english.enums import RecallEventType
 
 
 class RecallEventBase(SQLModel):
-    actor_id: str = Field(index=True)
+    learner_id: str = Field(index=True)
     occurred_at: datetime = Field(index=True)
     event_type: RecallEventType
     task_item_id: str | None = Field(default=None)

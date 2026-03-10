@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends
 
 from app.core.auth import verify_token
 from app.core.falkordb import get_graph_conn
+from app.crud.english.inventory.lexical_set import LexicalSetMeta, list_all
 from app.crud.english.inventory.lexis_item import (
     LexisItemSchema,
     list_by_lexical_set,
 )
-from app.crud.english.inventory.lexical_set import LexicalSetMeta, list_all
 
 router = APIRouter(prefix="/lexical-set", tags=["inventory_lexical_set"])
 

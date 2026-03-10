@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -110,6 +111,18 @@ def _tag_one_task(
     if not dry_run:
         for gw in matched:
             task_crud.link_grammar(graph, task_id=task_id, guideword=gw)
+        _grammar_cefr_q = (
+            "MATCH (t:Task {task_id: $task_id})-[:CONTAINS_GRAMMAR]->"
+            "(g:GrammarProfile)-[:GRAMMAR_LEVEL]->(c:CefrLevel) "
+            "RETURN c.code"
+        )
+        res = graph.query(_grammar_cefr_q, params={"task_id": task_id})
+        codes = [row[0] for row in res.result_set if row[0]]
+        if codes:
+            dominant = Counter(codes).most_common(1)[0][0]
+            task_crud.set_task_cefr(
+                graph, task_id, grammar_cefr=dominant.lower()
+            )
     return len(matched)
 
 

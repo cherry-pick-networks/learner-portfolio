@@ -1,4 +1,4 @@
-"""TaskItem graph: individual test items linked to Task and CefrLevel."""
+"""TaskItem graph: individual test items linked to Task."""
 
 from __future__ import annotations
 
@@ -19,14 +19,12 @@ class TaskItem(BaseModel):
     options: list[str]
     answer: int
     score: int
-    cefr: str | None = None
 
 
 _LIST_QUERY = (
     "MATCH (t:Task {task_id: $task_id})-[:HAS_TASK_ITEM]->(i:TaskItem) "
-    "OPTIONAL MATCH (i)-[:CEFR_LEVEL]->(c:CefrLevel) "
     "RETURN i.task_item_id, i.number, i.section, i.question_type, i.stem, "
-    "i.options, i.answer, i.score, c.code"
+    "i.options, i.answer, i.score"
 )
 
 
@@ -50,7 +48,6 @@ def list_by_task(graph: falkordb.Graph, task_id: str) -> list[TaskItem]:
                 options=options,
                 answer=int(row[6]) if row[6] is not None else 0,
                 score=int(row[7]) if row[7] is not None else 0,
-                cefr=str(row[8]).lower() if row[8] else None,
             )
         )
     return items
@@ -67,9 +64,8 @@ def upsert_task_item(
     options: list[str],
     answer: int,
     score: int,
-    cefr: str = "",
 ) -> None:
-    """Create or update TaskItem node, link to Task and optionally CefrLevel."""
+    """Create or update TaskItem node, link to Task."""
     task_item_id = f"{task_id}_i{number}"
     options_json = json.dumps(options)
 
@@ -104,14 +100,3 @@ def upsert_task_item(
     graph.query(
         link_q, params={"task_id": task_id, "task_item_id": task_item_id}
     )
-
-    if cefr:
-        cefr_q = (
-            "MATCH (i:TaskItem {task_item_id: $task_item_id}) "
-            "MERGE (c:CefrLevel {code: $cefr}) "
-            "MERGE (i)-[:CEFR_LEVEL]->(c)"
-        )
-        graph.query(
-            cefr_q,
-            params={"task_item_id": task_item_id, "cefr": cefr.lower()},
-        )

@@ -94,7 +94,6 @@ def _process_one_chunk(
                 options=options_list,
                 answer=answer,
                 score=1,
-                cefr="",
             )
 
     if not dry_run and article:

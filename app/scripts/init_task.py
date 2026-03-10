@@ -122,7 +122,6 @@ def _process_one_source(
                 text=text,
                 footnotes="",
             )
-            cefr = str(data.get(f"{prefix}_cefr") or "").strip().lower() or ""
             task_item_crud.upsert_task_item(
                 graph,
                 task_id=task_id,
@@ -133,7 +132,6 @@ def _process_one_source(
                 options=item_data["options"],
                 answer=item_data["answer"],
                 score=item_data["score"],
-                cefr=cefr,
             )
         if not dry_run and text:
             tagged_list.append((task_id, text))
@@ -142,7 +140,6 @@ def _process_one_source(
     # Long passage p41: items 41, 42
     if "p41_text" in data:
         text = str(data.get("p41_text") or "").strip()
-        cefr = str(data.get("p41_cefr") or "").strip().lower() or ""
         items = _long_group_items(data, "p41", 41, 2)
         question_group = "41"
         task_id = f"{source_id}_p{question_group}"
@@ -166,7 +163,6 @@ def _process_one_source(
                     options=it["options"],
                     answer=it["answer"],
                     score=it["score"],
-                    cefr=cefr,
                 )
         if not dry_run and text:
             tagged_list.append((task_id, text))
@@ -175,7 +171,6 @@ def _process_one_source(
     # Long passage p43: items 43, 44, 45
     if "p43_text" in data:
         text = str(data.get("p43_text") or "").strip()
-        cefr = str(data.get("p43_cefr") or "").strip().lower() or ""
         items = _long_group_items(data, "p43", 43, 3)
         question_group = "43"
         task_id = f"{source_id}_p{question_group}"
@@ -199,7 +194,6 @@ def _process_one_source(
                     options=it["options"],
                     answer=it["answer"],
                     score=it["score"],
-                    cefr=cefr,
                 )
         if not dry_run and text:
             tagged_list.append((task_id, text))
