@@ -35,11 +35,13 @@ def schedule_item(
     scheduler = _scheduler_from_w_vector(w_vector_json)
     card, _ = scheduler.review_card(card, rating)
     retention = scheduler.get_card_retrievability(card)
+    stability = card.stability if card.stability is not None else 0.0
+    difficulty = card.difficulty if card.difficulty is not None else 0.0
     return (
         card.to_json(),
         card.due,
-        card.stability,
-        card.difficulty,
+        stability,
+        difficulty,
         retention,
     )
 

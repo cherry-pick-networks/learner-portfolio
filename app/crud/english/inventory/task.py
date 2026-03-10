@@ -133,7 +133,7 @@ def set_task_cefr(
     if lexis_cefr is None and grammar_cefr is None:
         return
     parts: list[str] = []
-    params: dict[str, str] = {"task_id": task_id}
+    params: dict[str, object] = {"task_id": task_id}
     if lexis_cefr is not None:
         parts.append("t.lexis_cefr = $lexis_cefr")
         params["lexis_cefr"] = lexis_cefr.lower()
