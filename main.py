@@ -76,6 +76,8 @@ async def lifespan(application: FastAPI) -> AsyncGenerator[None, None]:
             cefr.ensure_cefr_levels(graph, session)
     except GraphDbUnavailableError as e:
         logging.warning("FalkorDB unavailable at startup: %s", e)
+    except Exception:
+        logging.exception("Unexpected error during graph/DB init at startup")
     yield
 
 

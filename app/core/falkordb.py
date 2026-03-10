@@ -39,12 +39,9 @@ def _ensure_db() -> None:
             )
             _graph = _client.select_graph(settings.falkordb_graph)
         except Exception as e:
-            err = str(e).lower()
-            if "connection" in err or "refused" in err or "timeout" in err:
-                raise GraphDbUnavailableError(
-                    "Graph database unavailable (e.g. FalkorDB not running)."
-                ) from e
-            raise
+            raise GraphDbUnavailableError(
+                "Graph database unavailable (e.g. FalkorDB not running)."
+            ) from e
         for q in _INDEX_QUERIES:
             try:
                 _graph.query(q)
