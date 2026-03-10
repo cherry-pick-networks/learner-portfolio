@@ -8,7 +8,7 @@ from app.core.sqlite import get_session
 from app.crud.english.records import task_outcome as crud
 from app.models.english.task_outcome import TaskOutcomeCreate, TaskOutcomeRead
 
-router = APIRouter(prefix="/task-outcome", tags=["task_outcome"])
+router = APIRouter(prefix="/task/outcome", tags=["task_outcome"])
 
 
 @router.post("", response_model=TaskOutcomeRead)

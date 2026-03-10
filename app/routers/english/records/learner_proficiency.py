@@ -12,7 +12,7 @@ from app.models.english.learner_proficiency import (
     LearnerProficiencyUpdate,
 )
 
-router = APIRouter(prefix="/learner-proficiency", tags=["learner_proficiency"])
+router = APIRouter(prefix="/learner/proficiency", tags=["learner_proficiency"])
 
 
 @router.get("/{learner_id}", response_model=list[LearnerProficiencyRead])

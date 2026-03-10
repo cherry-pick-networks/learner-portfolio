@@ -133,7 +133,7 @@ def test_update_acquisition_not_found() -> None:
 
 
 def test_create_learner_proficiency_missing_fields() -> None:
-    resp = client.post(f"{_BASE}/learner-proficiency", json={})
+    resp = client.post(f"{_BASE}/learner/proficiency", json={})
     assert resp.status_code == 422
 
 
@@ -149,7 +149,7 @@ def test_create_learner_proficiency_ok() -> None:
         ".create_learner_proficiency"
     ) as m:
         m.return_value = ret
-        resp = client.post(f"{_BASE}/learner-proficiency", json=payload)
+        resp = client.post(f"{_BASE}/learner/proficiency", json=payload)
     assert resp.status_code == 200
 
 
@@ -159,7 +159,7 @@ def test_list_learner_proficiency_ok() -> None:
         ".list_learner_proficiency"
     ) as m:
         m.return_value = []
-        resp = client.get(f"{_BASE}/learner-proficiency/u1")
+        resp = client.get(f"{_BASE}/learner/proficiency/u1")
     assert resp.status_code == 200
     assert resp.json() == []
 
@@ -170,7 +170,7 @@ def test_update_learner_proficiency_not_found() -> None:
         ".update_learner_proficiency"
     ) as m:
         m.side_effect = ValueError("not found")
-        resp = client.put(f"{_BASE}/learner-proficiency/999", json={})
+        resp = client.put(f"{_BASE}/learner/proficiency/999", json={})
     assert resp.status_code == 404
 
 
@@ -182,7 +182,7 @@ def test_list_needs_analysis_ok() -> None:
         "app.routers.english.records.needs_analysis.crud.list_needs_analysis"
     ) as m:
         m.return_value = []
-        resp = client.get(f"{_BASE}/needs-analysis")
+        resp = client.get(f"{_BASE}/needs/analysis")
     assert resp.status_code == 200
     assert resp.json() == []
 
@@ -192,7 +192,7 @@ def test_list_needs_analysis_with_filter() -> None:
         "app.routers.english.records.needs_analysis.crud.list_needs_analysis"
     ) as m:
         m.return_value = []
-        resp = client.get(f"{_BASE}/needs-analysis?cefr_level=b1")
+        resp = client.get(f"{_BASE}/needs/analysis?cefr_level=b1")
     assert resp.status_code == 200
 
 
@@ -200,7 +200,7 @@ def test_list_needs_analysis_with_filter() -> None:
 
 
 def test_create_task_outcome_missing_fields() -> None:
-    resp = client.post(f"{_BASE}/task-outcome", json={})
+    resp = client.post(f"{_BASE}/task/outcome", json={})
     assert resp.status_code == 422
 
 
@@ -211,7 +211,7 @@ def test_create_task_outcome_ok() -> None:
         "app.routers.english.records.task_outcome.crud.create_task_outcome"
     ) as m:
         m.return_value = ret
-        resp = client.post(f"{_BASE}/task-outcome", json=payload)
+        resp = client.post(f"{_BASE}/task/outcome", json=payload)
     assert resp.status_code == 200
 
 
@@ -219,7 +219,7 @@ def test_list_task_outcomes_ok() -> None:
     _p = "app.routers.english.records.task_outcome.crud.list_task_outcomes"
     with patch(_p) as m:
         m.return_value = []
-        resp = client.get(f"{_BASE}/task-outcome/u1")
+        resp = client.get(f"{_BASE}/task/outcome/u1")
     assert resp.status_code == 200
     assert resp.json() == []
 
@@ -228,7 +228,7 @@ def test_list_task_outcomes_ok() -> None:
 
 
 def test_create_writing_assessment_missing_fields() -> None:
-    resp = client.post(f"{_BASE}/writing-assessment", json={})
+    resp = client.post(f"{_BASE}/writing/assessment", json={})
     assert resp.status_code == 422
 
 
@@ -248,7 +248,7 @@ def test_create_writing_assessment_ok() -> None:
         ".create_writing_assessment"
     ) as m:
         m.return_value = ret
-        resp = client.post(f"{_BASE}/writing-assessment", json=payload)
+        resp = client.post(f"{_BASE}/writing/assessment", json=payload)
     assert resp.status_code == 200
 
 
@@ -258,6 +258,6 @@ def test_list_writing_assessments_ok() -> None:
         ".list_writing_assessments"
     ) as m:
         m.return_value = []
-        resp = client.get(f"{_BASE}/writing-assessment/u1")
+        resp = client.get(f"{_BASE}/writing/assessment/u1")
     assert resp.status_code == 200
     assert resp.json() == []

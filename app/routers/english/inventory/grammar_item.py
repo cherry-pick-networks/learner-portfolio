@@ -12,7 +12,7 @@ from app.crud.english.inventory.grammar import GrammarProfile
 from app.schemas.english.inventory.curriculum import GrammarItemRead
 from app.services.english.grammar_session import list_profiles_for_session
 
-router = APIRouter(prefix="/grammar-items", tags=["inventory_grammar_item"])
+router = APIRouter(prefix="/grammar/items", tags=["inventory_grammar_item"])
 
 
 @router.get(

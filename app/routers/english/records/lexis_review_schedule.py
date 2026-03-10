@@ -12,7 +12,7 @@ from app.models.english.learner_item import LearnerItem
 from app.schemas.english.records.learner_item import LexisReviewScheduleRead
 
 router = APIRouter(
-    prefix="/lexis-review-schedule", tags=["lexis-review-schedule"]
+    prefix="/lexis/review/schedule", tags=["lexis_review_schedule"]
 )
 
 

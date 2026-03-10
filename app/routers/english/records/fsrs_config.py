@@ -8,7 +8,7 @@ from app.core.sqlite import get_session
 from app.crud.english.records import fsrs_config as crud
 from app.models.english.fsrs_config import FsrsConfigRead
 
-router = APIRouter(prefix="/fsrs-config", tags=["fsrs-config"])
+router = APIRouter(prefix="/fsrs/config", tags=["fsrs_config"])
 
 
 class FsrsConfigUpdateBody(SQLModel):

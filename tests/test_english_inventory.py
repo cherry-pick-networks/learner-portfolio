@@ -39,7 +39,7 @@ app.dependency_overrides[get_session] = fake_get_session
 
 client = TestClient(app)
 
-_LEXIS_BASE = "/english/records/lexis-review-schedule"
+_LEXIS_BASE = "/english/records/lexis/review/schedule"
 
 
 def _mock_graph_conn(

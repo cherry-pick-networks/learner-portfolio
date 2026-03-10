@@ -12,9 +12,7 @@ from app.crud.english.inventory.grammatical_set import (
 )
 from app.schemas.english.inventory.grammatical_set import GrammaticalSetMeta
 
-router = APIRouter(
-    prefix="/grammatical-set", tags=["inventory_grammatical_set"]
-)
+router = APIRouter(prefix="/grammar/set", tags=["inventory_grammar_set"])
 
 
 @router.get("", response_model=list[GrammaticalSetMeta])

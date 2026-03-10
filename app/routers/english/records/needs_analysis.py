@@ -9,7 +9,7 @@ from app.crud.english.records import needs_analysis as crud
 from app.models.english.enums import CefrLevel
 from app.models.english.needs_analysis import NeedsAnalysisRead
 
-router = APIRouter(prefix="/needs-analysis", tags=["needs_analysis"])
+router = APIRouter(prefix="/needs/analysis", tags=["needs_analysis"])
 
 
 @router.get("", response_model=list[NeedsAnalysisRead])

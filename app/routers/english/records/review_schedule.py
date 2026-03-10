@@ -11,7 +11,7 @@ from app.crud.english.records import learner_item as crud
 from app.models.english.learner_item import LearnerItem
 from app.schemas.english.records.learner_item import ReviewScheduleRead
 
-router = APIRouter(prefix="/review-schedule", tags=["review-schedule"])
+router = APIRouter(prefix="/review/schedule", tags=["review_schedule"])
 
 
 def _to_read(row: LearnerItem) -> ReviewScheduleRead:

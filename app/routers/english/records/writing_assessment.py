@@ -11,7 +11,7 @@ from app.models.english.writing_assessment import (
     WritingAssessmentRead,
 )
 
-router = APIRouter(prefix="/writing-assessment", tags=["writing_assessment"])
+router = APIRouter(prefix="/writing/assessment", tags=["writing_assessment"])
 
 
 @router.post("", response_model=WritingAssessmentRead)

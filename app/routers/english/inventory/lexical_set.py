@@ -11,7 +11,7 @@ from app.crud.english.inventory.lexis_item import (
     list_by_lexical_set,
 )
 
-router = APIRouter(prefix="/lexical-set", tags=["inventory_lexical_set"])
+router = APIRouter(prefix="/lexis/set", tags=["inventory_lexis_set"])
 
 
 @router.get("", response_model=list[LexicalSetMeta])

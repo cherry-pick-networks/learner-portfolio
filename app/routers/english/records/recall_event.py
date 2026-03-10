@@ -8,7 +8,7 @@ from app.core.sqlite import get_session
 from app.crud.english.records import recall_event as crud
 from app.models.english.recall_event import RecallEventCreate, RecallEventRead
 
-router = APIRouter(prefix="/recall-event", tags=["recall-event"])
+router = APIRouter(prefix="/recall/event", tags=["recall_event"])
 
 
 @router.post("", response_model=RecallEventRead)
