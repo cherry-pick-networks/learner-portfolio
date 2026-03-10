@@ -1,7 +1,5 @@
 """GrammarSet and LexisSet (SQLite): textbook TOC for grammar and lexis."""
 
-from __future__ import annotations
-
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -14,7 +12,7 @@ class GrammarSet(SQLModel, table=True):
     unit_num: int = 0
     title: str | None = None
 
-    items: list[GrammarSetItem] = Relationship(back_populates="set_row")
+    items: list["GrammarSetItem"] = Relationship(back_populates="set_row")
 
 
 class GrammarSetItem(SQLModel, table=True):
@@ -34,7 +32,7 @@ class LexisSet(SQLModel, table=True):
     source: str = ""
     unit_num: int = 0
 
-    items: list[LexisSetItem] = Relationship(back_populates="set_row")
+    items: list["LexisSetItem"] = Relationship(back_populates="set_row")
 
 
 class LexisSetItem(SQLModel, table=True):
