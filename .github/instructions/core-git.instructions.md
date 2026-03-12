@@ -2,7 +2,7 @@
 description: |
   When using git, branching, committing, or renaming files. Trunk-based, solo
   dev; all work on main; exp/* branches only for local experiments.
-alwaysApply: true
+applyTo: "**"
 ---
 
 **Branch strategy (§G)**: Trunk-based development — always work directly on

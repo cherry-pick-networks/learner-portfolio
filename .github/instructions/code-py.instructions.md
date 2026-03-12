@@ -1,7 +1,7 @@
 ---
 description: |
   Python code conventions: typing, function length, imports, comments.
-glob: "**/*.py"
+applyTo: "**/*.py"
 ---
 
 **Line length (§L)**: 80 characters maximum.

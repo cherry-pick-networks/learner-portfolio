@@ -2,8 +2,7 @@
 description: |
   Use <domain>-<topic> two-segment hyphenated naming for .md
   and .mdc files under .github/instructions/. See docs/RULES.md §2.
-globs: [".github/instructions/**/*.md", ".github/instructions/**/*.mdc"]
-alwaysApply: false
+applyTo: ".github/instructions/**/*.md"
 ---
 
 When creating or renaming **.md** or **.mdc** files under

@@ -2,7 +2,7 @@
 description: |
   When you run or configure parallel subagents (e.g. Task tool). Domain
   partition and commit-only-touched-files; subagents respect boundaries.
-alwaysApply: false
+applyTo: null
 ---
 
 **§SA (Subagent partition)**: When running parallel subagents, assign work by

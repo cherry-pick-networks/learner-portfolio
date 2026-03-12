@@ -1,7 +1,7 @@
 ---
 description: |
   Core rules every session: language, agent principles, answer format.
-alwaysApply: true
+applyTo: "**"
 ---
 
 **Language (§C)**: English only — code, comments, docstrings, UI strings, docs.

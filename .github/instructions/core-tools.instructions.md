@@ -1,7 +1,7 @@
 ---
 description: |
   Tool selection: when to use Shell vs. specialized tools (Read/Write/Grep/Glob).
-alwaysApply: true
+applyTo: "**"
 ---
 
 **§T (Tools)**: Prefer specialized tools over Shell. Use Shell only when no
