@@ -39,8 +39,7 @@ Canonical text for always-applied rules (§C, §I, §O, §W) is here;
   `.pytest_cache`, `.ruff_cache`
 - Do not add a sixth path component. Do not use camelCase or hyphens
   in directory or file names.
-- **.cursor/ file naming**: Files under `.cursor/rules/`,
-  `.cursor/commands/`, and `.cursor/skills/` use
+- **.github/instructions/ file naming**: Files under `.github/instructions/` use
   `<domain>-<topic>` — exactly two lowercase segments separated
   by one hyphen. Allowed domains: `core`, `code`, `data`. No
   single-word names; no three-or-more-segment names.

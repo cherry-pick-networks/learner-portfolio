@@ -5,6 +5,7 @@ alwaysApply: true
 ---
 
 **Language (§C)**: English only — code, comments, docstrings, UI strings, docs.
+However, responses to the user should be in Korean if explicitly requested.
 
 **Agent principles (§I)**: KISS — prefer the simplest option. Follow existing
 conventions (formatting, naming, structure). No speculative implementation —

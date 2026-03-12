@@ -46,7 +46,7 @@ tests/
 
 ## Rules & skills
 
-Rules live in `.cursor/rules/`. Always-applied:
+Rules live in `.github/instructions/`. Always-applied:
 `core-agent.mdc`, `core-tools.mdc`, `core-git.mdc`.
 
 ## AI docs

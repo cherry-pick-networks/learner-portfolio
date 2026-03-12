@@ -58,7 +58,7 @@ tests/
   hyphens. Core files named after the technology they wrap
   (`sqlite.py`, `falkordb.py`, `config.py`). Router and model files use
   a singular domain noun (`grammar.py`, `practice.py`).
-- **Exceptions**: `.git`, `.cursor`, `.venv`, `__pycache__`,
+- **Exceptions**: `.git`, `.github/instructions`, `.venv`, `__pycache__`,
   `.pytest_cache`, `.ruff_cache`
 
 ---
