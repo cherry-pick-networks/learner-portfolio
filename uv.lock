@@ -649,6 +649,7 @@ dependencies = [
     { name = "gdown" },
     { name = "openai" },
     { name = "pydantic-settings" },
+    { name = "pyhwp" },
     { name = "python-jose", extra = ["cryptography"] },
     { name = "python-multipart" },
     { name = "pyyaml" },
@@ -683,6 +684,7 @@ requires-dist = [
     { name = "gdown", specifier = ">=5.2.1" },
     { name = "openai", specifier = ">=2.26.0" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
+    { name = "pyhwp", specifier = ">=0.1b15" },
     { name = "python-jose", extras = ["cryptography"], specifier = ">=3.5.0" },
     { name = "python-multipart", specifier = ">=0.0.9" },
     { name = "pyyaml", specifier = ">=6.0" },
@@ -1124,6 +1126,17 @@ sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b014
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
 ]
+
+[[package]]
+name = "pyhwp"
+version = "0.1b15"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography", marker = "platform_python_implementation != 'Jython'" },
+    { name = "lxml", marker = "platform_python_implementation != 'Jython'" },
+    { name = "olefile", marker = "platform_python_implementation != 'Jython'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ec/38/2a95e3772d9168065f3391d62012f6b34e122d8eafd2ebcccf675a3ef23d/pyhwp-0.1b15.tar.gz", hash = "sha256:85146a1d0ef2a4bd356b2f15f78d172fbe85f9f1fc8c2d8d2a9f65ed23113328", size = 218143, upload-time = "2020-05-30T07:19:34.965Z" }
 
 [[package]]
 name = "pymupdf"
